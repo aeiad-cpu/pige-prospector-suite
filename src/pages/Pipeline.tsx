@@ -120,7 +120,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "Anne Dubois", phone: "06 56 78 90 12",
   },
   {
-    id: 11, property: "Loft industriel 180m²", ville: "Lyon 6ème", prix: "780 000 €", surface: "180m²", pieces: 6, source: "LBC", publishedAt: "Il y a 2h",
+    id: 11, property: "Loft industriel 180m²", ville: "Lyon 6ème", prix: "780 000 €", surface: "180m²", pieces: 6, source: "LBC", publishedAt: "Il y a 2h", status: "mandate",
     description: "Loft industriel de 180m², hauteur sous plafond 4m, verrière, mezzanine, terrasse privée 30m².",
     photos: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=260&fit=crop", "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=260&fit=crop"],
     vendeur: "Marc Dupont", phone: "06 11 22 33 44",
