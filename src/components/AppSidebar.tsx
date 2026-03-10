@@ -8,7 +8,6 @@ import {
   Phone,
   ListChecks,
   CalendarDays,
-  Map,
   AlertTriangle,
   Zap,
   UsersRound,
@@ -40,8 +39,7 @@ const menuGroups = [
   {
     label: "Intelligence",
     items: [
-      { title: "Carte des Leads", url: "/carte", icon: Map },
-      { title: "No-shows", url: "/noshows", icon: AlertTriangle },
+      { title: "RDV Annulés", url: "/noshows", icon: AlertTriangle },
     ],
   },
   {
@@ -64,7 +62,6 @@ export function AppSidebar() {
         collapsed ? "w-16" : "w-60"
       }`}
     >
-      {/* Logo */}
       <div className="h-14 flex items-center px-4 border-b border-sidebar-border gap-2">
         <Target className="h-6 w-6 text-primary shrink-0" />
         {!collapsed && (
@@ -74,7 +71,6 @@ export function AppSidebar() {
         )}
       </div>
 
-      {/* Menu */}
       <nav className="flex-1 overflow-y-auto py-2">
         {menuGroups.map((group) => (
           <div key={group.label} className="mb-2">
@@ -106,7 +102,6 @@ export function AppSidebar() {
         ))}
       </nav>
 
-      {/* Collapse button */}
       <button
         onClick={() => setCollapsed(!collapsed)}
         className="h-10 flex items-center justify-center border-t border-sidebar-border text-muted-foreground hover:text-foreground transition-colors"
