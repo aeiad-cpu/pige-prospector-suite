@@ -19,6 +19,26 @@ import { AppLayout } from "@/components/AppLayout";
 import { TransferDialog } from "@/components/TransferDialog";
 import { toast } from "sonner";
 
+type PipelineStatus =
+  | "prospect" | "auto_sent" | "no_response" | "callback" | "not_interested"
+  | "rdv" | "no_show" | "offer_sent" | "negotiation" | "mandate" | "no_follow" | "excluded" | "sold";
+
+const pipelineStatuses: { key: PipelineStatus; label: string; dotColor: string }[] = [
+  { key: "prospect", label: "À Prospecter", dotColor: "bg-green-500" },
+  { key: "auto_sent", label: "Message Auto Envoyé", dotColor: "bg-blue-500" },
+  { key: "no_response", label: "Pas de Réponse", dotColor: "bg-red-500" },
+  { key: "callback", label: "Rappel Prévu", dotColor: "bg-orange-500" },
+  { key: "not_interested", label: "Non Intéressé", dotColor: "bg-gray-400" },
+  { key: "rdv", label: "RDV Prévu", dotColor: "bg-green-500" },
+  { key: "no_show", label: "No-Show", dotColor: "bg-red-500" },
+  { key: "offer_sent", label: "Offre Envoyée", dotColor: "bg-blue-500" },
+  { key: "negotiation", label: "En Négociation", dotColor: "bg-orange-500" },
+  { key: "mandate", label: "Mandat Signé", dotColor: "bg-violet-500" },
+  { key: "no_follow", label: "Pas de Suite", dotColor: "bg-gray-400" },
+  { key: "excluded", label: "Exclu", dotColor: "bg-gray-600" },
+  { key: "sold", label: "Vendu", dotColor: "bg-emerald-700" },
+];
+
 interface ScrapedLead {
   id: number;
   property: string;
@@ -35,77 +55,78 @@ interface ScrapedLead {
   url?: string;
   isNew?: boolean;
   addedToLeads?: boolean;
+  status: PipelineStatus;
 }
 
 const scrapedData: ScrapedLead[] = [
   {
-    id: 1, property: "Maison 120m² avec jardin", ville: "Lyon 3ème", prix: "450 000 €", surface: "120m²", pieces: 5, source: "LBC", publishedAt: "Il y a 2 min", isNew: true,
+    id: 1, property: "Maison 120m² avec jardin", ville: "Lyon 3ème", prix: "450 000 €", surface: "120m²", pieces: 5, source: "LBC", publishedAt: "Il y a 2 min", isNew: true, status: "prospect",
     description: "Magnifique maison de 120m² avec jardin arboré de 250m², garage double, 4 chambres, salon lumineux avec cheminée. Cuisine équipée ouverte. DPE: C.",
     photos: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=260&fit=crop", "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=260&fit=crop"],
     vendeur: "Jean-Marc Leblanc", phone: "06 12 34 56 78", url: "https://www.leboncoin.fr/ventes_immobilieres/1234567890.htm",
   },
   {
-    id: 2, property: "T3 lumineux 65m²", ville: "Paris 11ème", prix: "520 000 €", surface: "65m²", pieces: 3, source: "LBC", publishedAt: "Il y a 5 min", isNew: true,
+    id: 2, property: "T3 lumineux 65m²", ville: "Paris 11ème", prix: "520 000 €", surface: "65m²", pieces: 3, source: "LBC", publishedAt: "Il y a 5 min", isNew: true, status: "auto_sent",
     description: "Appartement T3 lumineux de 65m² au 4ème étage avec ascenseur. Séjour double, 2 chambres, balcon filant. Parquet chêne.",
     photos: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=260&fit=crop"],
     vendeur: "Sophie Martin", phone: "06 23 45 67 89",
   },
   {
-    id: 3, property: "Villa contemporaine piscine 200m²", ville: "Aix-en-Provence", prix: "890 000 €", surface: "200m²", pieces: 7, source: "LBC", publishedAt: "Il y a 12 min",
+    id: 3, property: "Villa contemporaine piscine 200m²", ville: "Aix-en-Provence", prix: "890 000 €", surface: "200m²", pieces: 7, source: "LBC", publishedAt: "Il y a 12 min", status: "no_response",
     description: "Villa contemporaine 200m² avec piscine, terrain 800m², 5 chambres, suite parentale, bureau. Vue dégagée. DPE: B.",
     photos: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=260&fit=crop"],
     vendeur: "Pierre Duval",
   },
   {
-    id: 4, property: "T2 rénové centre-ville 42m²", ville: "Bordeaux", prix: "245 000 €", surface: "42m²", pieces: 2, source: "LBC", publishedAt: "Il y a 18 min", isNew: true,
+    id: 4, property: "T2 rénové centre-ville 42m²", ville: "Bordeaux", prix: "245 000 €", surface: "42m²", pieces: 2, source: "LBC", publishedAt: "Il y a 18 min", isNew: true, status: "callback",
     description: "T2 rénové de 42m², cuisine américaine, chambre avec placard, salle d'eau moderne. Résidence calme, proche tram.",
     photos: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=260&fit=crop"],
     vendeur: "Marie Rousseau", phone: "06 45 67 89 01",
   },
   {
-    id: 5, property: "Maison de ville 150m²", ville: "Nantes", prix: "380 000 €", surface: "150m²", pieces: 5, source: "PAP", publishedAt: "Il y a 25 min",
+    id: 5, property: "Maison de ville 150m²", ville: "Nantes", prix: "380 000 €", surface: "150m²", pieces: 5, source: "PAP", publishedAt: "Il y a 25 min", status: "prospect",
     description: "Maison de ville 150m² sur 3 niveaux, 4 chambres, jardin 100m², garage. Proche centre-ville. DPE: D.",
     photos: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=260&fit=crop"],
     vendeur: "Laurent Petit",
   },
   {
-    id: 6, property: "T4 dernier étage terrasse 85m²", ville: "Marseille 8ème", prix: "310 000 €", surface: "85m²", pieces: 4, source: "LBC", publishedAt: "Il y a 32 min",
+    id: 6, property: "T4 dernier étage terrasse 85m²", ville: "Marseille 8ème", prix: "310 000 €", surface: "85m²", pieces: 4, source: "LBC", publishedAt: "Il y a 32 min", status: "rdv",
     description: "T4 avec terrasse de 20m², vue mer, 3 chambres, cuisine équipée, parking. Résidence récente avec piscine.",
     photos: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=260&fit=crop"],
     vendeur: "Claire Bernard", phone: "06 78 90 12 34",
   },
   {
-    id: 7, property: "Plain-pied 95m² avec véranda", ville: "Toulouse", prix: "275 000 €", surface: "95m²", pieces: 4, source: "PAP", publishedAt: "Il y a 45 min",
+    id: 7, property: "Plain-pied 95m² avec véranda", ville: "Toulouse", prix: "275 000 €", surface: "95m²", pieces: 4, source: "PAP", publishedAt: "Il y a 45 min", status: "auto_sent",
     description: "Plain-pied 95m², 3 chambres, jardin 350m², véranda. Quartier résidentiel calme. DPE: D.",
     photos: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=260&fit=crop"],
     vendeur: "François Moreau", phone: "06 34 56 78 90",
   },
   {
-    id: 8, property: "Duplex 110m² rooftop", ville: "Strasbourg", prix: "425 000 €", surface: "110m²", pieces: 5, source: "LBC", publishedAt: "Il y a 1h",
+    id: 8, property: "Duplex 110m² rooftop", ville: "Strasbourg", prix: "425 000 €", surface: "110m²", pieces: 5, source: "LBC", publishedAt: "Il y a 1h", status: "negotiation",
     description: "Duplex 110m² en dernier étage, rooftop privé 40m², 3 chambres, 2 SDB, parking. Quartier Orangerie.",
     photos: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=260&fit=crop", "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=260&fit=crop"],
     vendeur: "Isabelle Leroy", phone: "06 89 01 23 45",
   },
   {
-    id: 9, property: "Studio rénové 28m²", ville: "Lille", prix: "145 000 €", surface: "28m²", pieces: 1, source: "PAP", publishedAt: "Il y a 1h15",
+    id: 9, property: "Studio rénové 28m²", ville: "Lille", prix: "145 000 €", surface: "28m²", pieces: 1, source: "PAP", publishedAt: "Il y a 1h15", status: "prospect",
     description: "Studio 28m² rénové, coin cuisine, salle d'eau. Idéal investissement locatif. Proche fac.",
     photos: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=260&fit=crop"],
     vendeur: "Thomas Garcia",
   },
   {
-    id: 10, property: "T5 haussmannien 140m²", ville: "Paris 8ème", prix: "1 200 000 €", surface: "140m²", pieces: 5, source: "LBC", publishedAt: "Il y a 1h30",
+    id: 10, property: "T5 haussmannien 140m²", ville: "Paris 8ème", prix: "1 200 000 €", surface: "140m²", pieces: 5, source: "LBC", publishedAt: "Il y a 1h30", status: "offer_sent",
     description: "T5 haussmannien de 140m², moulures, parquet, cheminées. 4 chambres, cave. Immeuble pierre de taille.",
     photos: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=260&fit=crop"],
     vendeur: "Anne Dubois", phone: "06 56 78 90 12",
   },
   {
-    id: 11, property: "Loft industriel 180m²", ville: "Lyon 6ème", prix: "780 000 €", surface: "180m²", pieces: 6, source: "LBC", publishedAt: "Il y a 2h",
+    id: 11, property: "Loft industriel 180m²", ville: "Lyon 6ème", prix: "780 000 €", surface: "180m²", pieces: 6, source: "LBC", publishedAt: "Il y a 2h", status: "mandate",
     description: "Loft industriel de 180m², hauteur sous plafond 4m, verrière, mezzanine, terrasse privée 30m².",
     photos: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=260&fit=crop", "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=260&fit=crop"],
     vendeur: "Marc Dupont", phone: "06 11 22 33 44",
   },
   {
-    id: 12, property: "T3 vue mer balcon 72m²", ville: "Nice", prix: "395 000 €", surface: "72m²", pieces: 3, source: "LBC", publishedAt: "Il y a 2h30",
+    id: 12, property: "T3 vue mer balcon 72m²", ville: "Nice", prix: "395 000 €", surface: "72m²", pieces: 3, source: "LBC", publishedAt: "Il y a 2h30", status: "prospect",
     description: "T3 de 72m² avec balcon, vue dégagée, 2 chambres, séjour lumineux. Quartier Cimiez, calme.",
     photos: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=260&fit=crop"],
     vendeur: "Julie Favre", phone: "06 55 66 77 88",
@@ -117,6 +138,7 @@ const Pipeline = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sourceFilter, setSourceFilter] = useState<string | null>(null);
   const [phoneFilter, setPhoneFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedLead, setSelectedLead] = useState<ScrapedLead | null>(null);
   const [currentPhoto, setCurrentPhoto] = useState(0);
@@ -130,6 +152,7 @@ const Pipeline = () => {
     if (sourceFilter && lead.source !== sourceFilter) return false;
     if (phoneFilter === "has" && !lead.phone) return false;
     if (phoneFilter === "no" && lead.phone) return false;
+    if (statusFilter && lead.status !== statusFilter) return false;
     if (searchQuery && !lead.property.toLowerCase().includes(searchQuery.toLowerCase()) && !lead.ville.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
@@ -146,7 +169,7 @@ const Pipeline = () => {
     if (type === "phone") setPhoneFilter(prev => prev === value ? null : value);
   };
 
-  const activeFilters = [sourceFilter, phoneFilter].filter(Boolean).length;
+  const activeFilters = [sourceFilter, phoneFilter, statusFilter].filter(Boolean).length;
 
   const openDetail = (lead: ScrapedLead) => { setSelectedLead(lead); setCurrentPhoto(0); };
 
@@ -257,6 +280,29 @@ const Pipeline = () => {
           <MapPin className="h-3 w-3 mr-1" /> Filtrer par ville
         </Badge>
         {activeFilters > 0 && <Badge variant="default" className="h-7 text-[10px] font-display"><Filter className="h-3 w-3 mr-1" />{activeFilters} filtre{activeFilters > 1 ? "s" : ""}</Badge>}
+      </div>
+
+      {/* Status filter bar */}
+      <div className="flex items-center gap-1.5 mb-4 flex-wrap">
+        {pipelineStatuses.map(col => {
+          const count = leads.filter(l => l.status === col.key).length;
+          const isActive = statusFilter === col.key;
+          return (
+            <button
+              key={col.key}
+              onClick={() => setStatusFilter(prev => prev === col.key ? null : col.key)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-colors ${
+                isActive
+                  ? "bg-primary/10 border-primary/40 text-primary font-medium"
+                  : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
+              }`}
+            >
+              <span className={`h-2 w-2 rounded-full shrink-0 ${col.dotColor}`} />
+              <span className="font-display text-[11px] uppercase tracking-wider whitespace-nowrap">{col.label}</span>
+              <span className={`text-[10px] font-bold ${isActive ? "text-primary" : "text-muted-foreground"}`}>{count}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Content */}

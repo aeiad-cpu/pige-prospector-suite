@@ -146,6 +146,7 @@ const BaseVendeurs = () => {
   const [heatFilter, setHeatFilter] = useState<string | null>(null);
   const [sourceFilter, setSourceFilter] = useState<string | null>(null);
   const [phoneFilter, setPhoneFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [currentPhoto, setCurrentPhoto] = useState(0);
@@ -159,6 +160,7 @@ const BaseVendeurs = () => {
     if (sourceFilter && lead.source !== sourceFilter) return false;
     if (phoneFilter === "has" && !lead.hasPhone) return false;
     if (phoneFilter === "no" && lead.hasPhone) return false;
+    if (statusFilter && lead.status !== statusFilter) return false;
     if (searchQuery && !lead.name.toLowerCase().includes(searchQuery.toLowerCase()) && !lead.property.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
@@ -176,7 +178,7 @@ const BaseVendeurs = () => {
     if (type === "phone") setPhoneFilter(prev => prev === value ? null : value);
   };
 
-  const activeFilters = [heatFilter, sourceFilter, phoneFilter].filter(Boolean).length;
+  const activeFilters = [heatFilter, sourceFilter, phoneFilter, statusFilter].filter(Boolean).length;
 
   const openHistory = (lead: Lead) => { setSelectedLead(lead); setCurrentPhoto(0); };
 
@@ -292,6 +294,29 @@ const BaseVendeurs = () => {
         <Badge variant={heatFilter === "cold" ? "cold" : "outline"} className="h-7 text-[10px] font-display cursor-pointer hover:bg-muted" onClick={() => toggleFilter("heat", "cold")}>❄️ Froids ({coldCount})</Badge>
         <Badge variant={sourceFilter === "LBC" ? "default" : "outline"} className="h-7 text-[10px] font-display cursor-pointer hover:bg-muted" onClick={() => toggleFilter("source", "LBC")}>Leboncoin ({lbcCount})</Badge>
         {activeFilters > 0 && <Badge variant="default" className="h-7 text-[10px] font-display"><Filter className="h-3 w-3 mr-1" />{activeFilters} filtre{activeFilters > 1 ? "s" : ""} actif{activeFilters > 1 ? "s" : ""}</Badge>}
+      </div>
+
+      {/* Status filter bar */}
+      <div className="flex items-center gap-1.5 mb-4 flex-wrap">
+        {columns.map(col => {
+          const count = leads.filter(l => l.status === col.key).length;
+          const isActive = statusFilter === col.key;
+          return (
+            <button
+              key={col.key}
+              onClick={() => setStatusFilter(prev => prev === col.key ? null : col.key)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-colors ${
+                isActive
+                  ? "bg-primary/10 border-primary/40 text-primary font-medium"
+                  : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
+              }`}
+            >
+              <span className={`h-2 w-2 rounded-full shrink-0 ${col.dotColor}`} />
+              <span className="font-display text-[11px] uppercase tracking-wider whitespace-nowrap">{col.label}</span>
+              <span className={`text-[10px] font-bold ${isActive ? "text-primary" : "text-muted-foreground"}`}>{count}</span>
+            </button>
+          );
+        })}
       </div>
 
       {/* Content */}
