@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Phone, PhoneOff, Voicemail, CalendarCheck, ChevronRight, Clock, Home, User,
   MessageSquare, Mic, Images, ChevronLeft, ChevronRightIcon, UserPlus, Smartphone,
-  RefreshCw, CheckCircle2, Info, Search, Contact,
+  RefreshCw, CheckCircle2, Info, Search, Contact, Lock, Sparkles, Brain,
 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { toast } from "sonner";
