@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Phone, PhoneOff, Voicemail, CalendarCheck, ChevronRight, Clock, Home, User, MessageSquare } from "lucide-react";
+import { Phone, PhoneOff, Voicemail, CalendarCheck, ChevronRight, Clock, Home, User, MessageSquare, Mic } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
+import { toast } from "sonner";
 
 const vendeur = {
   name: "Jean-Marc Leblanc",
