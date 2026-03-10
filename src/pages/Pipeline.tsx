@@ -152,6 +152,7 @@ const Pipeline = () => {
     if (sourceFilter && lead.source !== sourceFilter) return false;
     if (phoneFilter === "has" && !lead.phone) return false;
     if (phoneFilter === "no" && lead.phone) return false;
+    if (statusFilter && lead.status !== statusFilter) return false;
     if (searchQuery && !lead.property.toLowerCase().includes(searchQuery.toLowerCase()) && !lead.ville.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
