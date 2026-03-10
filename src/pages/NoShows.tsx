@@ -23,7 +23,7 @@ const NoShows = () => {
   return (
     <AppLayout>
       <div className="mb-6">
-        <h1 className="text-2xl font-display font-bold text-foreground">No-shows</h1>
+        <h1 className="text-2xl font-display font-bold text-foreground">Rendez-vous annulés</h1>
         <p className="text-sm text-muted-foreground mt-1">RDV manqués — relance prioritaire</p>
       </div>
 
@@ -32,7 +32,7 @@ const NoShows = () => {
           <div className="flex items-center gap-2 p-4 border-b border-border">
             <AlertTriangle className="h-4 w-4 text-destructive" />
             <span className="font-display text-xs uppercase tracking-wider text-foreground font-bold">
-              {noshows.length} no-shows à traiter
+              {noshows.length} rendez-vous annulés à traiter
             </span>
           </div>
           <Table>

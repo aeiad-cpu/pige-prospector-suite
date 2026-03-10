@@ -9,7 +9,6 @@ import PowerDialer from "./pages/PowerDialer";
 import Automatisation from "./pages/Automatisation";
 import Ambassadeur from "./pages/Ambassadeur";
 import BaseVendeurs from "./pages/BaseVendeurs";
-import CartePage from "./pages/CartePage";
 import NoShows from "./pages/NoShows";
 import Equipe from "./pages/Equipe";
 import Taches from "./pages/Taches";
@@ -32,7 +31,6 @@ const App = () => (
           <Route path="/automatisation" element={<Automatisation />} />
           <Route path="/ambassadeur" element={<Ambassadeur />} />
           <Route path="/vendeurs" element={<BaseVendeurs />} />
-          <Route path="/carte" element={<CartePage />} />
           <Route path="/noshows" element={<NoShows />} />
           <Route path="/equipe" element={<Equipe />} />
           <Route path="/taches" element={<Taches />} />
