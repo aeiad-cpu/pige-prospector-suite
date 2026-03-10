@@ -108,7 +108,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "Isabelle Leroy", phone: "06 89 01 23 45",
   },
   {
-    id: 9, property: "Studio rénové 28m²", ville: "Lille", prix: "145 000 €", surface: "28m²", pieces: 1, source: "PAP", publishedAt: "Il y a 1h15",
+    id: 9, property: "Studio rénové 28m²", ville: "Lille", prix: "145 000 €", surface: "28m²", pieces: 1, source: "PAP", publishedAt: "Il y a 1h15", status: "prospect",
     description: "Studio 28m² rénové, coin cuisine, salle d'eau. Idéal investissement locatif. Proche fac.",
     photos: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=260&fit=crop"],
     vendeur: "Thomas Garcia",
