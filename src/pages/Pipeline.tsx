@@ -102,7 +102,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "François Moreau", phone: "06 34 56 78 90",
   },
   {
-    id: 8, property: "Duplex 110m² rooftop", ville: "Strasbourg", prix: "425 000 €", surface: "110m²", pieces: 5, source: "LBC", publishedAt: "Il y a 1h",
+    id: 8, property: "Duplex 110m² rooftop", ville: "Strasbourg", prix: "425 000 €", surface: "110m²", pieces: 5, source: "LBC", publishedAt: "Il y a 1h", status: "negotiation",
     description: "Duplex 110m² en dernier étage, rooftop privé 40m², 3 chambres, 2 SDB, parking. Quartier Orangerie.",
     photos: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=260&fit=crop", "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=260&fit=crop"],
     vendeur: "Isabelle Leroy", phone: "06 89 01 23 45",
