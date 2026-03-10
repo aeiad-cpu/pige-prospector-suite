@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Target,
+  MessageSquare,
 } from "lucide-react";
 
 const menuGroups = [
