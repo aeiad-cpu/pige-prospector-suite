@@ -244,13 +244,8 @@ const Pipeline = () => {
           Leboncoin ({lbcCount})
         </Badge>
 
-        <Badge
-          variant={sourceFilter === "LC" ? "default" : "outline"}
-          className="h-7 text-[10px] font-display cursor-pointer hover:bg-muted"
-          onClick={() => toggleFilter("source", "LC")}
-        >
-          La Centrale ({lcCount})
-        </Badge>
+
+
 
         <Badge variant="outline" className="h-7 text-[10px] font-display cursor-pointer border-primary/50 text-primary hover:bg-primary/10">
           <MapPin className="h-3 w-3 mr-1" />
