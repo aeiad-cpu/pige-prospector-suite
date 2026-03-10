@@ -17,6 +17,7 @@ import {
   TrendingUp,
   Crosshair,
   Home,
+  Mic,
 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 
@@ -25,6 +26,7 @@ const kpis = [
   { label: "Appels à passer", value: "38", icon: Phone, change: "12 urgents" },
   { label: "RDV prévus", value: "7", icon: CalendarCheck, change: "3 cette semaine" },
   { label: "Mandats signés", value: "4", icon: FileSignature, change: "+1 ce mois" },
+  { label: "Vocaux déposés", value: "23", icon: Mic, change: "+5 aujourd'hui" },
 ];
 
 const sources = [

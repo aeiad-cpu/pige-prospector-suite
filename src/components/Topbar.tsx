@@ -1,7 +1,7 @@
-import { Search, Bell, CreditCard, User } from "lucide-react";
+import { Search, CreditCard, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
+import { RadarPepites } from "@/components/RadarPepites";
 
 export function Topbar() {
   return (
@@ -22,10 +22,7 @@ export function Topbar() {
           Abonnement
         </Button>
 
-        <button className="relative p-2 rounded-md hover:bg-accent transition-colors">
-          <Bell className="h-4 w-4 text-muted-foreground" />
-          <span className="absolute top-1 right-1 h-2 w-2 bg-primary rounded-full" />
-        </button>
+        <RadarPepites />
 
         <div className="flex items-center gap-2 pl-2 border-l border-border">
           <div className="h-8 w-8 bg-muted rounded-sm flex items-center justify-center">

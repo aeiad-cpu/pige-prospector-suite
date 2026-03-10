@@ -16,6 +16,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Target,
+  MessageSquare,
 } from "lucide-react";
 
 const menuGroups = [
@@ -31,6 +32,7 @@ const menuGroups = [
     label: "Exécution",
     items: [
       { title: "Power Dialer", url: "/dialer", icon: Phone },
+      { title: "Cockpit Omnicanal", url: "/cockpit", icon: MessageSquare },
       { title: "Tâches", url: "/taches", icon: ListChecks },
       { title: "Agenda", url: "/agenda", icon: CalendarDays },
     ],

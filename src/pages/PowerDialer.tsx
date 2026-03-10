@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Phone, PhoneOff, Voicemail, CalendarCheck, ChevronRight, Clock, Home, User, MessageSquare } from "lucide-react";
+import { Phone, PhoneOff, Voicemail, CalendarCheck, ChevronRight, Clock, Home, User, MessageSquare, Mic } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
+import { toast } from "sonner";
 
 const vendeur = {
   name: "Jean-Marc Leblanc",
@@ -179,9 +180,17 @@ const PowerDialer = () => {
               <CalendarCheck className="h-5 w-5" />
               RDV Fixé
             </Button>
-            <Button variant="outline" size="lg" className="gap-2 text-sm font-display uppercase">
-              <Voicemail className="h-5 w-5" />
-              Drop Message Vocal
+            <Button
+              variant="default"
+              size="lg"
+              className="gap-2 text-sm font-display uppercase bg-violet-600 hover:bg-violet-700 text-white"
+              onClick={() => {
+                toast.success("🎙️ Message vocal déposé avec succès !", { description: "Passage au prospect suivant..." });
+                setTimeout(() => setIsCallActive(false), 1200);
+              }}
+            >
+              <Mic className="h-5 w-5" />
+              Drop Voicemail
             </Button>
             <Button
               variant="destructive"

@@ -14,6 +14,7 @@ import NoShows from "./pages/NoShows";
 import Equipe from "./pages/Equipe";
 import Taches from "./pages/Taches";
 import Agenda from "./pages/Agenda";
+import CockpitOmnicanal from "./pages/CockpitOmnicanal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -36,6 +37,7 @@ const App = () => (
           <Route path="/equipe" element={<Equipe />} />
           <Route path="/taches" element={<Taches />} />
           <Route path="/agenda" element={<Agenda />} />
+          <Route path="/cockpit" element={<CockpitOmnicanal />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
