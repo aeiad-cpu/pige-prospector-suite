@@ -96,7 +96,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "Claire Bernard", phone: "06 78 90 12 34",
   },
   {
-    id: 7, property: "Plain-pied 95m² avec véranda", ville: "Toulouse", prix: "275 000 €", surface: "95m²", pieces: 4, source: "PAP", publishedAt: "Il y a 45 min",
+    id: 7, property: "Plain-pied 95m² avec véranda", ville: "Toulouse", prix: "275 000 €", surface: "95m²", pieces: 4, source: "PAP", publishedAt: "Il y a 45 min", status: "auto_sent",
     description: "Plain-pied 95m², 3 chambres, jardin 350m², véranda. Quartier résidentiel calme. DPE: D.",
     photos: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=260&fit=crop"],
     vendeur: "François Moreau", phone: "06 34 56 78 90",
