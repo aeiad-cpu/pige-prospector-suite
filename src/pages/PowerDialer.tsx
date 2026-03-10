@@ -272,6 +272,59 @@ Si c'est temporaire, je reste à votre disposition pour en discuter quand vous s
 
 // ---------- Component ----------
 
+const statusOptions = [
+  { key: "prospect", label: "À Prospecter", emoji: "🟢" },
+  { key: "auto_sent", label: "Message Auto Envoyé", emoji: "🔵" },
+  { key: "no_response", label: "Pas de Réponse", emoji: "🔴" },
+  { key: "callback", label: "Rappel Prévu", emoji: "🟠" },
+  { key: "not_interested", label: "Non Intéressé", emoji: "⚫" },
+  { key: "rdv", label: "RDV Prévu", emoji: "🟢" },
+  { key: "no_show", label: "No-Show", emoji: "🔴" },
+  { key: "offer_sent", label: "Offre Envoyée", emoji: "🔵" },
+  { key: "negotiation", label: "En Négociation", emoji: "🟠" },
+  { key: "mandate", label: "Mandat Signé", emoji: "🟣" },
+  { key: "no_follow", label: "Pas de Suite", emoji: "⚫" },
+  { key: "excluded", label: "Exclu", emoji: "⬛" },
+  { key: "sold", label: "Vendu", emoji: "✅" },
+];
+
+const heatOptions = [
+  { key: "hot", label: "Chaud", emoji: "🔥" },
+  { key: "warm", label: "Tiède", emoji: "🌤" },
+  { key: "cold", label: "Froid", emoji: "❄️" },
+];
+
+// Simulated live transcription for Jean-Marc Leblanc
+const simulatedTranscription = [
+  { time: "00:00", speaker: "agent", text: "Bonjour M. Leblanc, je suis Marc Dupont, conseiller immobilier sur Lyon 3ème." },
+  { time: "00:05", speaker: "client", text: "Oui bonjour, qu'est-ce que c'est ?" },
+  { time: "00:08", speaker: "agent", text: "J'ai vu votre annonce pour la maison de 120m² sur Leboncoin. J'ai des acquéreurs qualifiés intéressés." },
+  { time: "00:16", speaker: "client", text: "Ah oui, j'ai mis l'annonce il y a pas longtemps. Mais je ne suis pas sûr de vouloir passer par une agence." },
+  { time: "00:22", speaker: "agent", text: "Je comprends tout à fait. Ce que je vous propose est complémentaire à ce que vous faites..." },
+  { time: "00:30", speaker: "client", text: "En fait, c'est surtout les frais qui me posent problème. Je ne veux pas payer de commission." },
+  { time: "00:36", speaker: "agent", text: "Très bonne question ! Nos honoraires sont entièrement à la charge de l'acquéreur. Vous ne payez rien." },
+  { time: "00:44", speaker: "client", text: "Ah bon ? Vraiment rien du tout ? Parce que j'ai eu d'autres agences qui..." },
+  { time: "00:50", speaker: "agent", text: "Oui, c'est notre modèle. Votre prix de vente est votre prix net vendeur. Zéro commission déduite." },
+  { time: "00:58", speaker: "client", text: "C'est intéressant ça. Mais j'ai déjà fait estimer par un notaire..." },
+  { time: "01:05", speaker: "agent", text: "Parfait, c'est une bonne base. Je peux vous proposer une contre-estimation gratuite basée sur les ventes réelles du quartier." },
+  { time: "01:14", speaker: "client", text: "Hmm... Et ça engage à quelque chose ?" },
+  { time: "01:17", speaker: "agent", text: "Absolument rien. C'est un RDV de 20 minutes, sans engagement. Juste pour vous donner une vision marché complète." },
+  { time: "01:25", speaker: "client", text: "Bon, pourquoi pas... Quand est-ce que vous seriez disponible ?" },
+  { time: "01:30", speaker: "agent", text: "Je suis disponible demain matin ou jeudi après-midi. Qu'est-ce qui vous arrange le mieux ?" },
+  { time: "01:37", speaker: "client", text: "Jeudi après-midi ce serait bien, vers 14h ?" },
+  { time: "01:41", speaker: "agent", text: "Parfait, jeudi 14h c'est noté ! Je vous envoie un SMS de confirmation." },
+];
+
+const aiCoachingSuggestions = [
+  { time: "00:16", tip: "💡 Le client hésite sur l'agence → Utilisez l'objection 'Je veux vendre seul' pour rassurer sur la valeur ajoutée" },
+  { time: "00:30", tip: "⚡ Objection honoraires détectée → Répondez immédiatement que les frais sont à la charge de l'acquéreur" },
+  { time: "00:44", tip: "✅ Bonne réponse ! Le client est réceptif. Enchaînez avec une proposition concrète" },
+  { time: "00:58", tip: "📋 Le client mentionne une estimation existante → Proposez une contre-estimation gratuite pour apporter de la valeur" },
+  { time: "01:14", tip: "🎯 Question sur l'engagement = signal d'intérêt fort ! Rassurez sur le sans-engagement et proposez un RDV" },
+  { time: "01:25", tip: "🔥 SIGNAL CHAUD ! Le client demande vos disponibilités → Proposez 2 créneaux précis, pas plus" },
+  { time: "01:37", tip: "🏆 RDV en cours de fixation ! Confirmez le créneau et proposez d'envoyer un SMS de confirmation" },
+];
+
 const PowerDialer = () => {
   const [activeScript, setActiveScript] = useState("default");
   const [isCallActive, setIsCallActive] = useState(true);
@@ -286,6 +339,27 @@ const PowerDialer = () => {
   const [clientNotes, setClientNotes] = useState("");
   const [showSyncInfo, setShowSyncInfo] = useState(false);
   const [clientSaved, setClientSaved] = useState(false);
+  // Categorization modal
+  const [showCategorize, setShowCategorize] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedHeat, setSelectedHeat] = useState<string | null>(null);
+  const [categorizeNotes, setCategorizeNotes] = useState("");
+  // RDV modal
+  const [showRdv, setShowRdv] = useState(false);
+  const [rdvDate, setRdvDate] = useState("");
+  const [rdvTime, setRdvTime] = useState("");
+  const [rdvNotes, setRdvNotes] = useState("");
+  // Transcription simulation
+  const [visibleLines, setVisibleLines] = useState(0);
+
+  // Simulate transcription appearing line by line
+  useEffect(() => {
+    if (!isCallActive || visibleLines >= simulatedTranscription.length) return;
+    const timer = setTimeout(() => {
+      setVisibleLines(prev => prev + 1);
+    }, visibleLines === 0 ? 500 : 2500 + Math.random() * 2000);
+    return () => clearTimeout(timer);
+  }, [isCallActive, visibleLines]);
 
   // Filter objections
   const filteredCategories = objectionCategories.map((cat) => ({
