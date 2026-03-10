@@ -65,7 +65,7 @@ const Pipeline = () => {
   const [heatFilter, setHeatFilter] = useState<string | null>(null);
   const [sourceFilter, setSourceFilter] = useState<string | null>(null);
   const [phoneFilter, setPhoneFilter] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"kanban" | "grid">("kanban");
+  const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
 
   const filteredLeads = leads.filter((lead) => {
     if (heatFilter && lead.heat !== heatFilter) return false;
