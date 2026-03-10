@@ -169,7 +169,7 @@ const Pipeline = () => {
     if (type === "phone") setPhoneFilter(prev => prev === value ? null : value);
   };
 
-  const activeFilters = [sourceFilter, phoneFilter].filter(Boolean).length;
+  const activeFilters = [sourceFilter, phoneFilter, statusFilter].filter(Boolean).length;
 
   const openDetail = (lead: ScrapedLead) => { setSelectedLead(lead); setCurrentPhoto(0); };
 
