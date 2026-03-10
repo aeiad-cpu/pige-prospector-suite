@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Target } from "lucide-react";
 import { toast } from "sonner";
+import { SignupModal } from "@/components/SignupModal";
 
 interface LoginModalProps {
   open: boolean;
@@ -14,6 +15,7 @@ export function LoginModal({ open, onLogin }: LoginModalProps) {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showSignup, setShowSignup] = useState(false);
 
   const handleGoogleLogin = () => {
     setLoading(true);
@@ -29,6 +31,16 @@ export function LoginModal({ open, onLogin }: LoginModalProps) {
       onLogin(email);
     }, 1200);
   };
+
+  if (showSignup) {
+    return (
+      <SignupModal
+        open={true}
+        onOpenChange={(o) => { if (!o) setShowSignup(false); }}
+        onBack={() => setShowSignup(false)}
+      />
+    );
+  }
 
   return (
     <Dialog open={open}>
@@ -82,6 +94,18 @@ export function LoginModal({ open, onLogin }: LoginModalProps) {
             )}
             {loading ? "Connexion..." : "Se connecter avec Google"}
           </Button>
+
+          <div className="text-center pt-2 border-t border-border">
+            <p className="text-xs text-muted-foreground">
+              Pas encore de compte ?{" "}
+              <button
+                className="text-primary font-medium hover:underline transition-colors"
+                onClick={() => setShowSignup(true)}
+              >
+                S'inscrire
+              </button>
+            </p>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

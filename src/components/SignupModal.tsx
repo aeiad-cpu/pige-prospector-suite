@@ -9,11 +9,12 @@ import { toast } from "sonner";
 interface SignupModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onBack?: () => void;
 }
 
 type Step = "info" | "otp" | "success";
 
-export function SignupModal({ open, onOpenChange }: SignupModalProps) {
+export function SignupModal({ open, onOpenChange, onBack }: SignupModalProps) {
   const [step, setStep] = useState<Step>("info");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -140,6 +141,16 @@ export function SignupModal({ open, onOpenChange }: SignupModalProps) {
               ) : null}
               {loading ? "Envoi du code..." : "Recevoir le code SMS"}
             </Button>
+            {onBack && (
+              <div className="text-center pt-2 border-t border-border">
+                <p className="text-xs text-muted-foreground">
+                  Déjà un compte ?{" "}
+                  <button className="text-primary font-medium hover:underline transition-colors" onClick={onBack}>
+                    Se connecter
+                  </button>
+                </p>
+              </div>
+            )}
             <p className="text-[10px] text-center text-muted-foreground">
               En vous inscrivant, vous acceptez les conditions d'utilisation
             </p>
