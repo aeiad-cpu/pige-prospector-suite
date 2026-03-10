@@ -114,7 +114,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "Thomas Garcia",
   },
   {
-    id: 10, property: "T5 haussmannien 140m²", ville: "Paris 8ème", prix: "1 200 000 €", surface: "140m²", pieces: 5, source: "LBC", publishedAt: "Il y a 1h30",
+    id: 10, property: "T5 haussmannien 140m²", ville: "Paris 8ème", prix: "1 200 000 €", surface: "140m²", pieces: 5, source: "LBC", publishedAt: "Il y a 1h30", status: "offer_sent",
     description: "T5 haussmannien de 140m², moulures, parquet, cheminées. 4 chambres, cave. Immeuble pierre de taille.",
     photos: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=260&fit=crop"],
     vendeur: "Anne Dubois", phone: "06 56 78 90 12",
