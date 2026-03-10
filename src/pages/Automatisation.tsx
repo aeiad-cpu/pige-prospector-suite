@@ -1,10 +1,11 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import { AppLayout } from "@/components/AppLayout";
 import GlobalRules from "@/components/automatisation/GlobalRules";
 import TabSequences from "@/components/automatisation/TabSequences";
 import TabSMS from "@/components/automatisation/TabSMS";
 import TabWhatsApp from "@/components/automatisation/TabWhatsApp";
-import TabPaP from "@/components/automatisation/TabPaP";
+import TabLeBonCoin from "@/components/automatisation/TabLeBonCoin";
 import TabAgentIA from "@/components/automatisation/TabAgentIA";
 
 const Automatisation = () => {
@@ -22,14 +23,15 @@ const Automatisation = () => {
           <TabsTrigger value="sequences" className="font-display text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             Séquences
           </TabsTrigger>
-          <TabsTrigger value="sms" className="font-display text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            SMS
-          </TabsTrigger>
           <TabsTrigger value="whatsapp" className="font-display text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             WhatsApp
           </TabsTrigger>
-          <TabsTrigger value="pap" className="font-display text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-            PàP
+          <TabsTrigger value="leboncoin" className="font-display text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground gap-1.5">
+            LeBonCoin
+            <Badge variant="default" className="text-[8px] font-display h-4 px-1">MAJ</Badge>
+          </TabsTrigger>
+          <TabsTrigger value="sms" className="font-display text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+            SMS
           </TabsTrigger>
           <TabsTrigger value="agent-ia" className="font-display text-xs uppercase tracking-wider data-[state=active]:bg-violet-600 data-[state=active]:text-white">
             🤖 Agent IA
@@ -37,9 +39,9 @@ const Automatisation = () => {
         </TabsList>
 
         <TabsContent value="sequences"><TabSequences /></TabsContent>
-        <TabsContent value="sms"><TabSMS /></TabsContent>
         <TabsContent value="whatsapp"><TabWhatsApp /></TabsContent>
-        <TabsContent value="pap"><TabPaP /></TabsContent>
+        <TabsContent value="leboncoin"><TabLeBonCoin /></TabsContent>
+        <TabsContent value="sms"><TabSMS /></TabsContent>
         <TabsContent value="agent-ia"><TabAgentIA /></TabsContent>
       </Tabs>
     </AppLayout>
