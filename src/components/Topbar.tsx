@@ -1,9 +1,12 @@
-import { Search, CreditCard, User } from "lucide-react";
+import { Search, CreditCard, User, Sun, Moon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { RadarPepites } from "@/components/RadarPepites";
+import { useTheme } from "@/hooks/useTheme";
 
 export function Topbar() {
+  const { theme, toggleTheme } = useTheme();
+
   return (
     <header className="h-14 border-b border-border flex items-center justify-between px-6 bg-card shrink-0">
       {/* Search */}
@@ -17,6 +20,16 @@ export function Topbar() {
 
       {/* Right section */}
       <div className="flex items-center gap-3">
+        <Button
+          variant="outline"
+          size="icon"
+          className="h-9 w-9"
+          onClick={toggleTheme}
+          title={theme === "dark" ? "Mode clair" : "Mode sombre"}
+        >
+          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+        </Button>
+
         <Button variant="outline" size="sm" className="gap-2 font-display uppercase text-xs tracking-wider">
           <CreditCard className="h-3.5 w-3.5" />
           Abonnement
