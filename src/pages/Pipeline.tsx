@@ -19,6 +19,26 @@ import { AppLayout } from "@/components/AppLayout";
 import { TransferDialog } from "@/components/TransferDialog";
 import { toast } from "sonner";
 
+type PipelineStatus =
+  | "prospect" | "auto_sent" | "no_response" | "callback" | "not_interested"
+  | "rdv" | "no_show" | "offer_sent" | "negotiation" | "mandate" | "no_follow" | "excluded" | "sold";
+
+const pipelineStatuses: { key: PipelineStatus; label: string; dotColor: string }[] = [
+  { key: "prospect", label: "À Prospecter", dotColor: "bg-green-500" },
+  { key: "auto_sent", label: "Message Auto Envoyé", dotColor: "bg-blue-500" },
+  { key: "no_response", label: "Pas de Réponse", dotColor: "bg-red-500" },
+  { key: "callback", label: "Rappel Prévu", dotColor: "bg-orange-500" },
+  { key: "not_interested", label: "Non Intéressé", dotColor: "bg-gray-400" },
+  { key: "rdv", label: "RDV Prévu", dotColor: "bg-green-500" },
+  { key: "no_show", label: "No-Show", dotColor: "bg-red-500" },
+  { key: "offer_sent", label: "Offre Envoyée", dotColor: "bg-blue-500" },
+  { key: "negotiation", label: "En Négociation", dotColor: "bg-orange-500" },
+  { key: "mandate", label: "Mandat Signé", dotColor: "bg-violet-500" },
+  { key: "no_follow", label: "Pas de Suite", dotColor: "bg-gray-400" },
+  { key: "excluded", label: "Exclu", dotColor: "bg-gray-600" },
+  { key: "sold", label: "Vendu", dotColor: "bg-emerald-700" },
+];
+
 interface ScrapedLead {
   id: number;
   property: string;
@@ -35,6 +55,7 @@ interface ScrapedLead {
   url?: string;
   isNew?: boolean;
   addedToLeads?: boolean;
+  status: PipelineStatus;
 }
 
 const scrapedData: ScrapedLead[] = [
