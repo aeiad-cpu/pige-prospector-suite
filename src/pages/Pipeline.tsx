@@ -78,7 +78,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "Pierre Duval",
   },
   {
-    id: 4, property: "T2 rénové centre-ville 42m²", ville: "Bordeaux", prix: "245 000 €", surface: "42m²", pieces: 2, source: "LBC", publishedAt: "Il y a 18 min", isNew: true,
+    id: 4, property: "T2 rénové centre-ville 42m²", ville: "Bordeaux", prix: "245 000 €", surface: "42m²", pieces: 2, source: "LBC", publishedAt: "Il y a 18 min", isNew: true, status: "callback",
     description: "T2 rénové de 42m², cuisine américaine, chambre avec placard, salle d'eau moderne. Résidence calme, proche tram.",
     photos: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=260&fit=crop"],
     vendeur: "Marie Rousseau", phone: "06 45 67 89 01",
