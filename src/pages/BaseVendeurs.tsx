@@ -549,6 +549,14 @@ const BaseVendeurs = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <TransferDialog
+        open={!!transferLead}
+        onOpenChange={(open) => !open && setTransferLead(null)}
+        propertyName={transferLead?.property}
+        ville={transferLead?.ville}
+        prix={transferLead?.prix}
+      />
     </AppLayout>
   );
 };
