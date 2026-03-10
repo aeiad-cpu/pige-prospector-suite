@@ -178,7 +178,7 @@ const BaseVendeurs = () => {
     if (type === "phone") setPhoneFilter(prev => prev === value ? null : value);
   };
 
-  const activeFilters = [heatFilter, sourceFilter, phoneFilter].filter(Boolean).length;
+  const activeFilters = [heatFilter, sourceFilter, phoneFilter, statusFilter].filter(Boolean).length;
 
   const openHistory = (lead: Lead) => { setSelectedLead(lead); setCurrentPhoto(0); };
 
