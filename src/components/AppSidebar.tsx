@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "@/components/NavLink";
+import { TransferDialog } from "@/components/TransferDialog";
+import { SignupModal } from "@/components/SignupModal";
 import { useLocation } from "react-router-dom";
 import {
   Radar,
@@ -17,6 +19,8 @@ import {
   Target,
   MessageSquare,
   Lightbulb,
+  ArrowRightLeft,
+  UserPlus,
 } from "lucide-react";
 
 const menuGroups = [
