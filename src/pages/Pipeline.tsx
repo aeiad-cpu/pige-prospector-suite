@@ -60,7 +60,7 @@ interface ScrapedLead {
 
 const scrapedData: ScrapedLead[] = [
   {
-    id: 1, property: "Maison 120m² avec jardin", ville: "Lyon 3ème", prix: "450 000 €", surface: "120m²", pieces: 5, source: "LBC", publishedAt: "Il y a 2 min", isNew: true,
+    id: 1, property: "Maison 120m² avec jardin", ville: "Lyon 3ème", prix: "450 000 €", surface: "120m²", pieces: 5, source: "LBC", publishedAt: "Il y a 2 min", isNew: true, status: "prospect",
     description: "Magnifique maison de 120m² avec jardin arboré de 250m², garage double, 4 chambres, salon lumineux avec cheminée. Cuisine équipée ouverte. DPE: C.",
     photos: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=260&fit=crop", "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=260&fit=crop"],
     vendeur: "Jean-Marc Leblanc", phone: "06 12 34 56 78", url: "https://www.leboncoin.fr/ventes_immobilieres/1234567890.htm",
