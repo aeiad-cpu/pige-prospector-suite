@@ -160,6 +160,7 @@ const BaseVendeurs = () => {
     if (sourceFilter && lead.source !== sourceFilter) return false;
     if (phoneFilter === "has" && !lead.hasPhone) return false;
     if (phoneFilter === "no" && lead.hasPhone) return false;
+    if (statusFilter && lead.status !== statusFilter) return false;
     if (searchQuery && !lead.name.toLowerCase().includes(searchQuery.toLowerCase()) && !lead.property.toLowerCase().includes(searchQuery.toLowerCase())) return false;
     return true;
   });
