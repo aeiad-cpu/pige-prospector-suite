@@ -13,9 +13,10 @@ import {
 import {
   Search, LayoutGrid, Columns3, RefreshCw,
   Phone, Clock, Filter, MessageSquare, ChevronLeft, ChevronRight,
-  Home, Send, Sparkles, User,
+  Home, Send, Sparkles, User, ArrowRightLeft,
 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
+import { TransferDialog } from "@/components/TransferDialog";
 import { toast } from "sonner";
 
 type LeadStatus =
