@@ -17,6 +17,7 @@ import {
   TrendingUp,
   Crosshair,
   Home,
+  Mic,
 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 

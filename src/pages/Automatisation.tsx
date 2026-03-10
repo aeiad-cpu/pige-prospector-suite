@@ -5,6 +5,7 @@ import TabSequences from "@/components/automatisation/TabSequences";
 import TabSMS from "@/components/automatisation/TabSMS";
 import TabWhatsApp from "@/components/automatisation/TabWhatsApp";
 import TabPaP from "@/components/automatisation/TabPaP";
+import TabAgentIA from "@/components/automatisation/TabAgentIA";
 
 const Automatisation = () => {
   return (
@@ -14,7 +15,6 @@ const Automatisation = () => {
         <p className="text-sm text-muted-foreground mt-1">Tour de contrôle des cadences de prospection</p>
       </div>
 
-      {/* Global Rules */}
       <GlobalRules />
 
       <Tabs defaultValue="sequences" className="w-full">
@@ -31,12 +31,16 @@ const Automatisation = () => {
           <TabsTrigger value="pap" className="font-display text-xs uppercase tracking-wider data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
             PàP
           </TabsTrigger>
+          <TabsTrigger value="agent-ia" className="font-display text-xs uppercase tracking-wider data-[state=active]:bg-violet-600 data-[state=active]:text-white">
+            🤖 Agent IA
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="sequences"><TabSequences /></TabsContent>
         <TabsContent value="sms"><TabSMS /></TabsContent>
         <TabsContent value="whatsapp"><TabWhatsApp /></TabsContent>
         <TabsContent value="pap"><TabPaP /></TabsContent>
+        <TabsContent value="agent-ia"><TabAgentIA /></TabsContent>
       </Tabs>
     </AppLayout>
   );

@@ -180,9 +180,17 @@ const PowerDialer = () => {
               <CalendarCheck className="h-5 w-5" />
               RDV Fixé
             </Button>
-            <Button variant="outline" size="lg" className="gap-2 text-sm font-display uppercase">
-              <Voicemail className="h-5 w-5" />
-              Drop Message Vocal
+            <Button
+              variant="default"
+              size="lg"
+              className="gap-2 text-sm font-display uppercase bg-violet-600 hover:bg-violet-700 text-white"
+              onClick={() => {
+                toast.success("🎙️ Message vocal déposé avec succès !", { description: "Passage au prospect suivant..." });
+                setTimeout(() => setIsCallActive(false), 1200);
+              }}
+            >
+              <Mic className="h-5 w-5" />
+              Drop Voicemail
             </Button>
             <Button
               variant="destructive"
