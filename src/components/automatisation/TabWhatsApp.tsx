@@ -4,8 +4,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { QrCode, AlertTriangle, Mic, Clock, Shield, MessageSquare, RefreshCw, Bell, Check } from "lucide-react";
+import { QrCode, AlertTriangle, Mic, Clock, Shield, MessageSquare, RefreshCw, Bell, Check, Search, CalendarDays, Pencil } from "lucide-react";
 import { toast } from "sonner";
 
 const TabWhatsApp = () => {
@@ -18,6 +20,18 @@ const TabWhatsApp = () => {
   const [targetHot, setTargetHot] = useState(true);
   const [targetWarm, setTargetWarm] = useState(true);
   const [targetCold, setTargetCold] = useState(true);
+
+  // Templates
+  const [tplPremierContact, setTplPremierContact] = useState("Bonjour {prenom},\n\nJe me permets de vous contacter suite à votre annonce pour votre {type_bien} à {ville}.\n\nJe suis conseiller immobilier spécialisé dans votre secteur et j'ai actuellement des acquéreurs qualifiés en recherche active.\n\nSeriez-vous ouvert à un échange rapide ?\n\nCordialement,\n{agent}");
+  const [tplRappel, setTplRappel] = useState("Bonjour {prenom},\n\nJe vous ai contacté par téléphone concernant votre {type_bien} à {ville} mais n'ai pas pu vous joindre.\n\nN'hésitez pas à me rappeler au {tel_agent} ou à me répondre ici.\n\nCordialement,\n{agent}");
+  const [tplAvantAppel, setTplAvantAppel] = useState("Bonjour {prenom},\n\nJe suis {agent}, conseiller immobilier. Je vais vous appeler dans quelques instants au sujet de votre {type_bien} à {ville} ({prix}).\n\nÀ tout de suite !");
+  const [editingTemplate, setEditingTemplate] = useState<string | null>(null);
+
+  // RDV Messages
+  const [agenceAdresse, setAgenceAdresse] = useState("123 rue de Paris, 75001 Paris");
+  const [rdvConfirmation, setRdvConfirmation] = useState("Bonjour {prenom}, votre RDV est confirmé le {date} à {heure}. Adresse: {adresse}. À bientôt !");
+  const [rdvVeille, setRdvVeille] = useState("Rappel : RDV demain à {heure} pour votre {marque} {modele}. Adresse: {adresse}. À demain !");
+  const [rdvJourJ, setRdvJourJ] = useState("Rappel : RDV aujourd'hui à {heure}. Nous vous attendons !");
 
   const hours = Array.from({ length: 15 }, (_, i) => `${i + 6}h`);
 
@@ -307,6 +321,196 @@ const TabWhatsApp = () => {
           </CardContent>
         </Card>
       </div>
+
+      {/* Modèles de messages */}
+      <Card className="bg-card border-border">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-2 mb-1">
+            <Search className="h-5 w-5 text-muted-foreground" />
+            <h3 className="text-lg font-bold text-foreground">Modèles de messages</h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-6">
+            Messages prédéfinis avec variables: {"{marque}"}, {"{modele}"}
+          </p>
+
+          <div className="space-y-4">
+            {/* Premier contact */}
+            <div className="border border-border rounded-lg p-4">
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <p className="text-sm font-bold text-foreground">Premier contact</p>
+                  <p className="text-xs text-muted-foreground">Message envoyé lors du premier contact avec le vendeur</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs gap-1"
+                  onClick={() => setEditingTemplate(editingTemplate === "premier" ? null : "premier")}
+                >
+                  <Pencil className="h-3 w-3" />
+                  Modifier
+                </Button>
+              </div>
+              {editingTemplate === "premier" ? (
+                <Textarea
+                  value={tplPremierContact}
+                  onChange={(e) => setTplPremierContact(e.target.value)}
+                  className="mt-3 min-h-[120px] text-sm bg-background"
+                />
+              ) : (
+                <div className="mt-3 bg-background rounded-lg p-3 text-sm text-foreground whitespace-pre-line">
+                  {tplPremierContact}
+                </div>
+              )}
+            </div>
+
+            {/* Rappel après appel */}
+            <div className="border border-border rounded-lg p-4">
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <p className="text-sm font-bold text-foreground">Rappel (après appel)</p>
+                  <p className="text-xs text-muted-foreground">Message envoyé après une tentative d'appel sans réponse</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs gap-1"
+                  onClick={() => setEditingTemplate(editingTemplate === "rappel" ? null : "rappel")}
+                >
+                  <Pencil className="h-3 w-3" />
+                  Modifier
+                </Button>
+              </div>
+              {editingTemplate === "rappel" ? (
+                <Textarea
+                  value={tplRappel}
+                  onChange={(e) => setTplRappel(e.target.value)}
+                  className="mt-3 min-h-[120px] text-sm bg-background"
+                />
+              ) : (
+                <div className="mt-3 bg-background rounded-lg p-3 text-sm text-foreground whitespace-pre-line">
+                  {tplRappel}
+                </div>
+              )}
+            </div>
+
+            {/* Avant d'appeler */}
+            <div className="border border-border rounded-lg p-4">
+              <div className="flex items-center justify-between mb-1">
+                <div>
+                  <p className="text-sm font-bold text-foreground">Avant d'appeler</p>
+                  <p className="text-xs text-muted-foreground">Message envoyé pour prévenir avant de téléphoner</p>
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs gap-1"
+                  onClick={() => setEditingTemplate(editingTemplate === "avant" ? null : "avant")}
+                >
+                  <Pencil className="h-3 w-3" />
+                  Modifier
+                </Button>
+              </div>
+              {editingTemplate === "avant" ? (
+                <Textarea
+                  value={tplAvantAppel}
+                  onChange={(e) => setTplAvantAppel(e.target.value)}
+                  className="mt-3 min-h-[120px] text-sm bg-background"
+                />
+              ) : (
+                <div className="mt-3 bg-background rounded-lg p-3 text-sm text-foreground whitespace-pre-line">
+                  {tplAvantAppel}
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Messages RDV WhatsApp */}
+      <Card className="bg-card border-border">
+        <CardContent className="p-6">
+          <div className="flex items-center gap-2 mb-1">
+            <CalendarDays className="h-5 w-5 text-muted-foreground" />
+            <h3 className="text-lg font-bold text-foreground">Messages RDV WhatsApp</h3>
+          </div>
+          <p className="text-sm text-muted-foreground mb-4">
+            Templates pour les confirmations et rappels de rendez-vous
+          </p>
+
+          {/* Variables disponibles */}
+          <div className="bg-background rounded-lg p-3 border border-border mb-4">
+            <p className="text-xs text-muted-foreground mb-2">Variables disponibles :</p>
+            <div className="flex flex-wrap gap-1.5">
+              {["{prenom}", "{nom}", "{date}", "{heure}", "{marque}", "{modele}", "{adresse}"].map((v) => (
+                <Badge key={v} variant="outline" className="text-[10px] font-mono cursor-pointer hover:bg-muted">
+                  {v}
+                </Badge>
+              ))}
+            </div>
+          </div>
+
+          {/* Adresse de l'agence */}
+          <div className="mb-6">
+            <label className="text-sm font-bold text-foreground mb-1.5 block">Adresse de l'agence</label>
+            <Input
+              value={agenceAdresse}
+              onChange={(e) => setAgenceAdresse(e.target.value)}
+              className="h-9 text-sm bg-background"
+            />
+            <p className="text-[11px] text-muted-foreground mt-1">Utilisée dans {"{adresse}"} des messages</p>
+          </div>
+
+          {/* Message de confirmation RDV */}
+          <div className="border border-border rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-2 mb-1">
+              <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              <p className="text-sm font-bold text-foreground">Message de confirmation RDV</p>
+            </div>
+            <p className="text-xs text-muted-foreground mb-3">Envoyé lors de la prise de RDV depuis la fiche lead</p>
+            <Textarea
+              value={rdvConfirmation}
+              onChange={(e) => setRdvConfirmation(e.target.value)}
+              className="min-h-[80px] text-sm bg-background"
+            />
+          </div>
+
+          {/* Rappel la veille */}
+          <div className="border border-border rounded-lg p-4 mb-4">
+            <div className="flex items-center gap-2 mb-1">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <p className="text-sm font-bold text-foreground">Rappel la veille (envoyé vers 18h)</p>
+            </div>
+            <Textarea
+              value={rdvVeille}
+              onChange={(e) => setRdvVeille(e.target.value)}
+              className="min-h-[80px] text-sm bg-background mt-2"
+            />
+          </div>
+
+          {/* Rappel jour J */}
+          <div className="border border-border rounded-lg p-4 mb-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Clock className="h-4 w-4 text-muted-foreground" />
+              <p className="text-sm font-bold text-foreground">Rappel le jour J (envoyé vers 8h)</p>
+            </div>
+            <Textarea
+              value={rdvJourJ}
+              onChange={(e) => setRdvJourJ(e.target.value)}
+              className="min-h-[80px] text-sm bg-background mt-2"
+            />
+          </div>
+
+          <Button
+            variant="default"
+            className="w-full gap-2 text-sm font-display uppercase"
+            onClick={() => toast.success("✅ Messages RDV sauvegardés")}
+          >
+            <Check className="h-4 w-4" />
+            Sauvegarder les messages RDV
+          </Button>
+        </CardContent>
+      </Card>
     </div>
   );
 };
