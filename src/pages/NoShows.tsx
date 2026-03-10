@@ -2,14 +2,15 @@ import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { AlertTriangle, Phone, User, MessageSquare, Home, Clock, ChevronLeft, ChevronRight } from "lucide-react";
+import { AlertTriangle, Phone, User, MessageSquare, Home, Clock, ChevronLeft, ChevronRight, Sparkles, Send, Pencil } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { toast } from "sonner";
 
@@ -71,9 +72,27 @@ const noshows: NoShow[] = [
 const NoShows = () => {
   const [selectedNoShow, setSelectedNoShow] = useState<NoShow | null>(null);
   const [currentPhoto, setCurrentPhoto] = useState(0);
+  // Reply popup state
+  const [replyTarget, setReplyTarget] = useState<{ noshow: NoShow; channel: string } | null>(null);
+  const [replyMessage, setReplyMessage] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
 
-  const handleSms = (channel: string, name: string) => {
-    toast.success(`📩 ${channel} envoyé à ${name}`);
+  const openReplyPopup = (noshow: NoShow, channel: string) => {
+    setReplyTarget({ noshow, channel });
+    // Auto-generate AI reply
+    setAiLoading(true);
+    setTimeout(() => {
+      const msg = `Bonjour ${noshow.name.split(" ")[0]}, je me permets de revenir vers vous suite à notre rendez-vous manqué du ${noshow.date}. Votre ${noshow.property} à ${noshow.ville} (${noshow.prix}) suscite un réel intérêt auprès de nos acquéreurs. Souhaitez-vous que nous reprogrammions un créneau à votre convenance ?`;
+      setReplyMessage(msg);
+      setAiLoading(false);
+    }, 800);
+  };
+
+  const sendReply = () => {
+    if (!replyTarget || !replyMessage.trim()) return;
+    toast.success(`📩 ${replyTarget.channel} envoyé à ${replyTarget.noshow.name}`);
+    setReplyTarget(null);
+    setReplyMessage("");
   };
 
   const handleCall = (name: string) => {
@@ -139,28 +158,23 @@ const NoShows = () => {
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="outline" size="sm" className="text-xs gap-1 h-7">
-                            <MessageSquare className="h-3 w-3" />
-                            SMS
+                            <MessageSquare className="h-3 w-3" /> Écrire
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleSms("LBC", n.name)}>
-                            <span className="text-xs font-display font-bold text-primary mr-2">LBC</span>
-                            Leboncoin
+                          <DropdownMenuItem onClick={() => openReplyPopup(n, "LBC")}>
+                            <span className="text-xs font-display font-bold text-primary mr-2">LBC</span> Leboncoin
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleSms("WhatsApp", n.name)}>
-                            <span className="text-xs font-display font-bold text-success mr-2">WA</span>
-                            WhatsApp
+                          <DropdownMenuItem onClick={() => openReplyPopup(n, "WhatsApp")}>
+                            <span className="text-xs font-display font-bold text-success mr-2">WA</span> WhatsApp
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleSms("SMS", n.name)}>
-                            <span className="text-xs font-display font-bold text-info mr-2">SMS</span>
-                            SMS classique
+                          <DropdownMenuItem onClick={() => openReplyPopup(n, "SMS")}>
+                            <span className="text-xs font-display font-bold text-info mr-2">SMS</span> SMS classique
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                       <Button variant="attack" size="sm" className="text-xs gap-1 h-7" onClick={() => handleCall(n.name)}>
-                        <Phone className="h-3 w-3" />
-                        Appeler
+                        <Phone className="h-3 w-3" /> Appeler
                       </Button>
                     </div>
                   </TableCell>
@@ -170,6 +184,75 @@ const NoShows = () => {
           </Table>
         </CardContent>
       </Card>
+
+      {/* Reply Popup — Cockpit-style */}
+      <Dialog open={!!replyTarget} onOpenChange={(open) => !open && setReplyTarget(null)}>
+        <DialogContent className="max-w-2xl bg-card p-0 overflow-hidden">
+          {replyTarget && (
+            <>
+              {/* Property preview */}
+              <div className="flex border-b border-border">
+                <div className="w-48 h-36 shrink-0 bg-muted">
+                  <img src={replyTarget.noshow.photos[0]} alt={replyTarget.noshow.property} className="w-full h-full object-cover" />
+                </div>
+                <div className="p-4 flex-1">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <h3 className="font-display font-bold text-foreground text-lg">{replyTarget.noshow.property}</h3>
+                      <p className="text-sm text-muted-foreground">{replyTarget.noshow.ville}</p>
+                    </div>
+                    <p className="text-lg font-display font-bold text-primary">{replyTarget.noshow.prix}</p>
+                  </div>
+                  <div className="flex items-center gap-3 mt-3 p-2 bg-background rounded">
+                    <User className="h-4 w-4 text-muted-foreground" />
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{replyTarget.noshow.name}</p>
+                      <p className="text-xs text-primary">{replyTarget.noshow.phone}</p>
+                    </div>
+                    <Badge variant="destructive" className="text-[10px] font-display ml-auto">{replyTarget.noshow.attempts} tentative{replyTarget.noshow.attempts > 1 ? "s" : ""}</Badge>
+                  </div>
+                </div>
+              </div>
+
+              {/* Message composition */}
+              <div className="p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <Badge variant="default" className="text-xs font-display gap-1">
+                    <Send className="h-3 w-3" /> {replyTarget.channel}
+                  </Badge>
+                  <span className="text-xs text-muted-foreground">Réponse de relance</span>
+                </div>
+
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Sparkles className="h-3.5 w-3.5 text-violet" />
+                  <span className="font-display text-[10px] uppercase tracking-wider text-violet font-bold">Réponse générée par l'IA — modifiez avant d'envoyer</span>
+                </div>
+
+                {aiLoading ? (
+                  <div className="flex items-center gap-2 p-4 bg-violet/5 rounded-lg">
+                    <span className="animate-spin h-4 w-4 border-2 border-violet border-t-transparent rounded-full" />
+                    <span className="text-sm text-muted-foreground">L'IA génère une réponse...</span>
+                  </div>
+                ) : (
+                  <Textarea
+                    value={replyMessage}
+                    onChange={(e) => setReplyMessage(e.target.value)}
+                    className="bg-background text-sm min-h-[120px]"
+                  />
+                )}
+              </div>
+
+              <DialogFooter className="p-4 pt-0 gap-2">
+                <Button variant="outline" onClick={() => setReplyTarget(null)}>Annuler</Button>
+                <Button variant="attack" className="gap-1.5" onClick={sendReply} disabled={aiLoading || !replyMessage.trim()}>
+                  <Send className="h-3.5 w-3.5" />
+                  Envoyer via {replyTarget.channel}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* History Dialog */}
       <Dialog open={!!selectedNoShow} onOpenChange={(open) => !open && setSelectedNoShow(null)}>
@@ -229,25 +312,23 @@ const NoShows = () => {
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="outline" size="sm" className="text-xs gap-1.5">
-                        <MessageSquare className="h-3.5 w-3.5" />
-                        Envoyer un message
+                        <MessageSquare className="h-3.5 w-3.5" /> Écrire un message
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent>
-                      <DropdownMenuItem onClick={() => handleSms("LBC", selectedNoShow.name)}>
+                      <DropdownMenuItem onClick={() => { setSelectedNoShow(null); openReplyPopup(selectedNoShow, "LBC"); }}>
                         <span className="text-xs font-display font-bold text-primary mr-2">LBC</span> Leboncoin
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleSms("WhatsApp", selectedNoShow.name)}>
+                      <DropdownMenuItem onClick={() => { setSelectedNoShow(null); openReplyPopup(selectedNoShow, "WhatsApp"); }}>
                         <span className="text-xs font-display font-bold text-success mr-2">WA</span> WhatsApp
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleSms("SMS", selectedNoShow.name)}>
+                      <DropdownMenuItem onClick={() => { setSelectedNoShow(null); openReplyPopup(selectedNoShow, "SMS"); }}>
                         <span className="text-xs font-display font-bold text-info mr-2">SMS</span> SMS classique
                       </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <Button variant="attack" size="sm" className="text-xs gap-1.5" onClick={() => handleCall(selectedNoShow.name)}>
-                    <Phone className="h-3.5 w-3.5" />
-                    Appeler
+                    <Phone className="h-3.5 w-3.5" /> Appeler
                   </Button>
                 </div>
 
