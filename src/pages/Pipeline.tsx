@@ -113,13 +113,13 @@ const Pipeline = () => {
             Kanban
           </Button>
           <Button
-            variant={viewMode === "grid" ? "default" : "ghost"}
+            variant={viewMode === "list" ? "default" : "ghost"}
             size="sm"
             className="h-8 px-3 text-xs font-display uppercase"
-            onClick={() => setViewMode("grid")}
+            onClick={() => setViewMode("list")}
           >
             <LayoutGrid className="h-3.5 w-3.5 mr-1.5" />
-            Grille
+            Liste
           </Button>
           <Button variant="ghost" size="sm" className="h-8 px-3 text-xs font-display uppercase">
             <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
