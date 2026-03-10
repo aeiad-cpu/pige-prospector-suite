@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { NavLink } from "@/components/NavLink";
 import { TransferDialog } from "@/components/TransferDialog";
-import { SignupModal } from "@/components/SignupModal";
+import { ReferralDialog } from "@/components/ReferralDialog";
 import { useLocation } from "react-router-dom";
 import {
   Radar,
@@ -20,7 +20,6 @@ import {
   MessageSquare,
   Lightbulb,
   ArrowRightLeft,
-  UserPlus,
 } from "lucide-react";
 
 const menuGroups = [
@@ -61,7 +60,7 @@ const menuGroups = [
 export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const [transferOpen, setTransferOpen] = useState(false);
-  const [signupOpen, setSignupOpen] = useState(false);
+  const [referralOpen, setReferralOpen] = useState(false);
   const location = useLocation();
 
   return (
@@ -125,11 +124,11 @@ export function AppSidebar() {
               {!collapsed && <span>Transférer un bien</span>}
             </button>
             <button
-              onClick={() => setSignupOpen(true)}
+              onClick={() => setReferralOpen(true)}
               className={`flex items-center gap-3 px-4 py-2 mx-1 rounded-md text-sm transition-colors text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground w-full ${collapsed ? "justify-center" : ""}`}
             >
-              <UserPlus className="h-4 w-4 shrink-0" />
-              {!collapsed && <span>Inscription</span>}
+              <Gift className="h-4 w-4 shrink-0" />
+              {!collapsed && <span>Parrainer un conseiller</span>}
             </button>
           </div>
         </nav>
@@ -143,7 +142,7 @@ export function AppSidebar() {
       </aside>
 
       <TransferDialog open={transferOpen} onOpenChange={setTransferOpen} />
-      <SignupModal open={signupOpen} onOpenChange={setSignupOpen} />
+      <ReferralDialog open={referralOpen} onOpenChange={setReferralOpen} />
     </>
   );
 }
