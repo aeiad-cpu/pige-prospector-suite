@@ -138,6 +138,7 @@ const Pipeline = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [sourceFilter, setSourceFilter] = useState<string | null>(null);
   const [phoneFilter, setPhoneFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [selectedLead, setSelectedLead] = useState<ScrapedLead | null>(null);
   const [currentPhoto, setCurrentPhoto] = useState(0);
