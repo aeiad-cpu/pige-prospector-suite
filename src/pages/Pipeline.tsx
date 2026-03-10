@@ -84,7 +84,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "Marie Rousseau", phone: "06 45 67 89 01",
   },
   {
-    id: 5, property: "Maison de ville 150m²", ville: "Nantes", prix: "380 000 €", surface: "150m²", pieces: 5, source: "PAP", publishedAt: "Il y a 25 min",
+    id: 5, property: "Maison de ville 150m²", ville: "Nantes", prix: "380 000 €", surface: "150m²", pieces: 5, source: "PAP", publishedAt: "Il y a 25 min", status: "prospect",
     description: "Maison de ville 150m² sur 3 niveaux, 4 chambres, jardin 100m², garage. Proche centre-ville. DPE: D.",
     photos: ["https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=400&h=260&fit=crop"],
     vendeur: "Laurent Petit",
