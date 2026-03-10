@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Phone, PhoneOff, Voicemail, CalendarCheck, ChevronRight, Clock, Home, User,
   MessageSquare, Mic, Images, ChevronLeft, ChevronRightIcon, UserPlus, Smartphone,
-  RefreshCw, CheckCircle2, Info, Search, Contact,
+  RefreshCw, CheckCircle2, Info, Search, Contact, Lock, Sparkles, Brain,
 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
 import { toast } from "sonner";
@@ -272,6 +272,59 @@ Si c'est temporaire, je reste à votre disposition pour en discuter quand vous s
 
 // ---------- Component ----------
 
+const statusOptions = [
+  { key: "prospect", label: "À Prospecter", emoji: "🟢" },
+  { key: "auto_sent", label: "Message Auto Envoyé", emoji: "🔵" },
+  { key: "no_response", label: "Pas de Réponse", emoji: "🔴" },
+  { key: "callback", label: "Rappel Prévu", emoji: "🟠" },
+  { key: "not_interested", label: "Non Intéressé", emoji: "⚫" },
+  { key: "rdv", label: "RDV Prévu", emoji: "🟢" },
+  { key: "no_show", label: "No-Show", emoji: "🔴" },
+  { key: "offer_sent", label: "Offre Envoyée", emoji: "🔵" },
+  { key: "negotiation", label: "En Négociation", emoji: "🟠" },
+  { key: "mandate", label: "Mandat Signé", emoji: "🟣" },
+  { key: "no_follow", label: "Pas de Suite", emoji: "⚫" },
+  { key: "excluded", label: "Exclu", emoji: "⬛" },
+  { key: "sold", label: "Vendu", emoji: "✅" },
+];
+
+const heatOptions = [
+  { key: "hot", label: "Chaud", emoji: "🔥" },
+  { key: "warm", label: "Tiède", emoji: "🌤" },
+  { key: "cold", label: "Froid", emoji: "❄️" },
+];
+
+// Simulated live transcription for Jean-Marc Leblanc
+const simulatedTranscription = [
+  { time: "00:00", speaker: "agent", text: "Bonjour M. Leblanc, je suis Marc Dupont, conseiller immobilier sur Lyon 3ème." },
+  { time: "00:05", speaker: "client", text: "Oui bonjour, qu'est-ce que c'est ?" },
+  { time: "00:08", speaker: "agent", text: "J'ai vu votre annonce pour la maison de 120m² sur Leboncoin. J'ai des acquéreurs qualifiés intéressés." },
+  { time: "00:16", speaker: "client", text: "Ah oui, j'ai mis l'annonce il y a pas longtemps. Mais je ne suis pas sûr de vouloir passer par une agence." },
+  { time: "00:22", speaker: "agent", text: "Je comprends tout à fait. Ce que je vous propose est complémentaire à ce que vous faites..." },
+  { time: "00:30", speaker: "client", text: "En fait, c'est surtout les frais qui me posent problème. Je ne veux pas payer de commission." },
+  { time: "00:36", speaker: "agent", text: "Très bonne question ! Nos honoraires sont entièrement à la charge de l'acquéreur. Vous ne payez rien." },
+  { time: "00:44", speaker: "client", text: "Ah bon ? Vraiment rien du tout ? Parce que j'ai eu d'autres agences qui..." },
+  { time: "00:50", speaker: "agent", text: "Oui, c'est notre modèle. Votre prix de vente est votre prix net vendeur. Zéro commission déduite." },
+  { time: "00:58", speaker: "client", text: "C'est intéressant ça. Mais j'ai déjà fait estimer par un notaire..." },
+  { time: "01:05", speaker: "agent", text: "Parfait, c'est une bonne base. Je peux vous proposer une contre-estimation gratuite basée sur les ventes réelles du quartier." },
+  { time: "01:14", speaker: "client", text: "Hmm... Et ça engage à quelque chose ?" },
+  { time: "01:17", speaker: "agent", text: "Absolument rien. C'est un RDV de 20 minutes, sans engagement. Juste pour vous donner une vision marché complète." },
+  { time: "01:25", speaker: "client", text: "Bon, pourquoi pas... Quand est-ce que vous seriez disponible ?" },
+  { time: "01:30", speaker: "agent", text: "Je suis disponible demain matin ou jeudi après-midi. Qu'est-ce qui vous arrange le mieux ?" },
+  { time: "01:37", speaker: "client", text: "Jeudi après-midi ce serait bien, vers 14h ?" },
+  { time: "01:41", speaker: "agent", text: "Parfait, jeudi 14h c'est noté ! Je vous envoie un SMS de confirmation." },
+];
+
+const aiCoachingSuggestions = [
+  { time: "00:16", tip: "💡 Le client hésite sur l'agence → Utilisez l'objection 'Je veux vendre seul' pour rassurer sur la valeur ajoutée" },
+  { time: "00:30", tip: "⚡ Objection honoraires détectée → Répondez immédiatement que les frais sont à la charge de l'acquéreur" },
+  { time: "00:44", tip: "✅ Bonne réponse ! Le client est réceptif. Enchaînez avec une proposition concrète" },
+  { time: "00:58", tip: "📋 Le client mentionne une estimation existante → Proposez une contre-estimation gratuite pour apporter de la valeur" },
+  { time: "01:14", tip: "🎯 Question sur l'engagement = signal d'intérêt fort ! Rassurez sur le sans-engagement et proposez un RDV" },
+  { time: "01:25", tip: "🔥 SIGNAL CHAUD ! Le client demande vos disponibilités → Proposez 2 créneaux précis, pas plus" },
+  { time: "01:37", tip: "🏆 RDV en cours de fixation ! Confirmez le créneau et proposez d'envoyer un SMS de confirmation" },
+];
+
 const PowerDialer = () => {
   const [activeScript, setActiveScript] = useState("default");
   const [isCallActive, setIsCallActive] = useState(true);
@@ -286,6 +339,27 @@ const PowerDialer = () => {
   const [clientNotes, setClientNotes] = useState("");
   const [showSyncInfo, setShowSyncInfo] = useState(false);
   const [clientSaved, setClientSaved] = useState(false);
+  // Categorization modal
+  const [showCategorize, setShowCategorize] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
+  const [selectedHeat, setSelectedHeat] = useState<string | null>(null);
+  const [categorizeNotes, setCategorizeNotes] = useState("");
+  // RDV modal
+  const [showRdv, setShowRdv] = useState(false);
+  const [rdvDate, setRdvDate] = useState("");
+  const [rdvTime, setRdvTime] = useState("");
+  const [rdvNotes, setRdvNotes] = useState("");
+  // Transcription simulation
+  const [visibleLines, setVisibleLines] = useState(0);
+
+  // Simulate transcription appearing line by line
+  useEffect(() => {
+    if (!isCallActive || visibleLines >= simulatedTranscription.length) return;
+    const timer = setTimeout(() => {
+      setVisibleLines(prev => prev + 1);
+    }, visibleLines === 0 ? 500 : 2500 + Math.random() * 2000);
+    return () => clearTimeout(timer);
+  }, [isCallActive, visibleLines]);
 
   // Filter objections
   const filteredCategories = objectionCategories.map((cat) => ({
@@ -544,11 +618,76 @@ const PowerDialer = () => {
         </Card>
       </div>
 
+      {/* Real-time Transcription Panel — greyed out */}
+      <Card className="bg-card border-border mb-4 relative">
+        <CardContent className="p-4">
+          <div className="relative opacity-40 pointer-events-none select-none">
+            <div className="flex items-center gap-2 mb-3">
+              <Badge variant="violet" className="text-[10px] font-display uppercase gap-1">
+                <Mic className="h-3 w-3" /> Transcription Live
+              </Badge>
+              <Badge variant="info" className="text-[10px] font-display uppercase gap-1">
+                <Brain className="h-3 w-3" /> Coach IA
+              </Badge>
+              <span className="text-[10px] text-muted-foreground">Appel avec Jean-Marc Leblanc</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              {/* Transcription col */}
+              <div className="col-span-2 bg-background rounded-lg p-3 max-h-[220px] overflow-y-auto">
+                <div className="space-y-2">
+                  {simulatedTranscription.slice(0, Math.max(visibleLines, 8)).map((line, i) => (
+                    <div key={i} className={`flex gap-2 ${line.speaker === "agent" ? "" : "flex-row-reverse"}`}>
+                      <div className={`shrink-0 h-6 w-6 rounded-full flex items-center justify-center text-[9px] font-display font-bold ${
+                        line.speaker === "agent" ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+                      }`}>
+                        {line.speaker === "agent" ? "MD" : "JM"}
+                      </div>
+                      <div className={`max-w-[80%] rounded-lg px-3 py-1.5 text-xs ${
+                        line.speaker === "agent"
+                          ? "bg-primary/10 text-foreground"
+                          : "bg-muted text-foreground"
+                      }`}>
+                        <span className="text-[9px] text-muted-foreground font-mono mr-1.5">{line.time}</span>
+                        {line.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* AI Coaching col */}
+              <div className="bg-background rounded-lg p-3 max-h-[220px] overflow-y-auto">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <Sparkles className="h-3.5 w-3.5 text-violet-500" />
+                  <span className="font-display text-[10px] uppercase tracking-wider text-violet-500 font-bold">Conseils IA</span>
+                </div>
+                <div className="space-y-2">
+                  {aiCoachingSuggestions.slice(0, Math.max(Math.floor(visibleLines / 2), 4)).map((s, i) => (
+                    <div key={i} className="p-2 bg-violet-500/5 border border-violet-500/10 rounded text-[11px] text-foreground leading-relaxed">
+                      {s.tip}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Lock overlay */}
+          <div className="absolute inset-0 flex items-center justify-center rounded-lg">
+            <div className="bg-background/80 border border-border rounded-lg px-6 py-3 shadow-lg flex items-center gap-2">
+              <Lock className="h-4 w-4 text-muted-foreground" />
+              <p className="font-display text-sm font-bold text-muted-foreground uppercase tracking-wider">Option à venir</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Bottom Action Bar */}
       <Card className="bg-card border-border">
         <CardContent className="p-4">
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <Button variant="success" size="lg" className="gap-2 text-sm">
+            <Button variant="success" size="lg" className="gap-2 text-sm" onClick={() => setShowRdv(true)}>
               <CalendarCheck className="h-5 w-5" />
               RDV Fixé
             </Button>
@@ -568,7 +707,10 @@ const PowerDialer = () => {
               variant="destructive"
               size="lg"
               className="gap-2 text-sm font-display uppercase"
-              onClick={() => setIsCallActive(false)}
+              onClick={() => {
+                setIsCallActive(false);
+                setShowCategorize(true);
+              }}
             >
               <PhoneOff className="h-5 w-5" />
               Raccrocher & Suivant
@@ -576,6 +718,149 @@ const PowerDialer = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Categorization Modal */}
+      <Dialog open={showCategorize} onOpenChange={setShowCategorize}>
+        <DialogContent className="sm:max-w-lg bg-card">
+          <DialogHeader>
+            <DialogTitle className="font-display text-lg">Catégoriser le lead</DialogTitle>
+            <DialogDescription>Qualifiez {vendeur.name} avant de passer au suivant</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-1">
+            {/* Temperature */}
+            <div>
+              <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-2 block">Température du lead</label>
+              <div className="flex gap-2">
+                {heatOptions.map(h => (
+                  <button
+                    key={h.key}
+                    onClick={() => setSelectedHeat(h.key)}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg border text-sm font-display font-bold transition-colors ${
+                      selectedHeat === h.key
+                        ? h.key === "hot" ? "bg-red-500/10 border-red-500/40 text-red-500"
+                          : h.key === "warm" ? "bg-orange-500/10 border-orange-500/40 text-orange-500"
+                          : "bg-blue-500/10 border-blue-500/40 text-blue-500"
+                        : "border-border text-muted-foreground hover:border-primary/30"
+                    }`}
+                  >
+                    <span className="text-lg">{h.emoji}</span> {h.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Status */}
+            <div>
+              <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-2 block">Statut</label>
+              <div className="grid grid-cols-2 gap-1.5 max-h-[200px] overflow-y-auto">
+                {statusOptions.map(s => (
+                  <button
+                    key={s.key}
+                    onClick={() => {
+                      setSelectedStatus(s.key);
+                      if (s.key === "rdv") {
+                        setShowCategorize(false);
+                        setShowRdv(true);
+                      }
+                    }}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md border text-xs font-display transition-colors text-left ${
+                      selectedStatus === s.key
+                        ? "bg-primary/10 border-primary/40 text-primary font-bold"
+                        : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                    }`}
+                  >
+                    <span>{s.emoji}</span> {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 block">Notes (optionnel)</label>
+              <Input placeholder="Ex: Intéressé mais attend le printemps..." value={categorizeNotes} onChange={(e) => setCategorizeNotes(e.target.value)} className="bg-background" />
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setShowCategorize(false)}>Annuler</Button>
+              <Button
+                variant="attack"
+                disabled={!selectedHeat || !selectedStatus}
+                onClick={() => {
+                  const heat = heatOptions.find(h => h.key === selectedHeat);
+                  const status = statusOptions.find(s => s.key === selectedStatus);
+                  toast.success(`Lead catégorisé : ${heat?.emoji} ${heat?.label} — ${status?.label}`, {
+                    description: categorizeNotes || "Passage au prospect suivant...",
+                  });
+                  setShowCategorize(false);
+                  setSelectedHeat(null);
+                  setSelectedStatus(null);
+                  setCategorizeNotes("");
+                }}
+              >
+                Valider & Suivant
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* RDV Date/Time Modal */}
+      <Dialog open={showRdv} onOpenChange={setShowRdv}>
+        <DialogContent className="sm:max-w-md bg-card">
+          <DialogHeader>
+            <div className="flex items-center gap-2 mb-1">
+              <CalendarCheck className="h-5 w-5 text-success" />
+              <DialogTitle className="font-display text-lg">RDV Fixé</DialogTitle>
+            </div>
+            <DialogDescription>Entrez la date et l'heure du rendez-vous avec {vendeur.name}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-1">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 block">Date *</label>
+                <Input type="date" value={rdvDate} onChange={(e) => setRdvDate(e.target.value)} className="bg-background" />
+              </div>
+              <div>
+                <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 block">Heure *</label>
+                <Input type="time" value={rdvTime} onChange={(e) => setRdvTime(e.target.value)} className="bg-background" />
+              </div>
+            </div>
+            <div>
+              <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 block">Notes (optionnel)</label>
+              <Input placeholder="Ex: RDV estimation au domicile..." value={rdvNotes} onChange={(e) => setRdvNotes(e.target.value)} className="bg-background" />
+            </div>
+
+            <div className="p-3 bg-success/5 border border-success/20 rounded-lg">
+              <p className="text-xs text-foreground">
+                📅 Le RDV sera ajouté automatiquement à votre <span className="font-medium">Agenda</span> et un SMS de confirmation sera envoyé à {vendeur.name}.
+              </p>
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setShowRdv(false)}>Annuler</Button>
+              <Button
+                variant="success"
+                className="gap-1.5"
+                disabled={!rdvDate || !rdvTime}
+                onClick={() => {
+                  const dateFormatted = new Date(rdvDate).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+                  toast.success(`✅ RDV fixé avec ${vendeur.name}`, {
+                    description: `${dateFormatted} à ${rdvTime}${rdvNotes ? ` — ${rdvNotes}` : ""}`,
+                  });
+                  setShowRdv(false);
+                  setRdvDate("");
+                  setRdvTime("");
+                  setRdvNotes("");
+                  setIsCallActive(false);
+                }}
+              >
+                <CalendarCheck className="h-3.5 w-3.5" /> Confirmer le RDV
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Client Card Dialog */}
       <Dialog open={showClientCard} onOpenChange={setShowClientCard}>
