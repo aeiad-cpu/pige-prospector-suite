@@ -49,6 +49,7 @@ const menuGroups = [
       { title: "Automatisation", url: "/automatisation", icon: Zap },
       { title: "Équipe", url: "/equipe", icon: UsersRound },
       { title: "Ambassadeur", url: "/ambassadeur", icon: Gift },
+      { title: "Suggestions", url: "/suggestions", icon: Lightbulb },
     ],
   },
 ];
