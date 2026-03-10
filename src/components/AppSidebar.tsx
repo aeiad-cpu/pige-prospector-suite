@@ -24,7 +24,7 @@ const menuGroups = [
     items: [
       { title: "Radar Live", url: "/", icon: Radar },
       { title: "Pipeline", url: "/pipeline", icon: LayoutGrid },
-      { title: "Base Vendeurs", url: "/vendeurs", icon: Users },
+      { title: "Base de biens", url: "/vendeurs", icon: Users },
     ],
   },
   {
