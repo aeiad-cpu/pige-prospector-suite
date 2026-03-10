@@ -72,7 +72,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "Sophie Martin", phone: "06 23 45 67 89",
   },
   {
-    id: 3, property: "Villa contemporaine piscine 200m²", ville: "Aix-en-Provence", prix: "890 000 €", surface: "200m²", pieces: 7, source: "LBC", publishedAt: "Il y a 12 min",
+    id: 3, property: "Villa contemporaine piscine 200m²", ville: "Aix-en-Provence", prix: "890 000 €", surface: "200m²", pieces: 7, source: "LBC", publishedAt: "Il y a 12 min", status: "no_response",
     description: "Villa contemporaine 200m² avec piscine, terrain 800m², 5 chambres, suite parentale, bureau. Vue dégagée. DPE: B.",
     photos: ["https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=400&h=260&fit=crop"],
     vendeur: "Pierre Duval",
