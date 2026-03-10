@@ -3,181 +3,309 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Input } from "@/components/ui/input";
-import { QrCode, AlertTriangle, Mic, Clock, Shield, MessageSquare } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { QrCode, AlertTriangle, Mic, Clock, Shield, MessageSquare, RefreshCw, Bell, Check } from "lucide-react";
+import { toast } from "sonner";
 
 const TabWhatsApp = () => {
   const [connected, setConnected] = useState(false);
   const [autoSend, setAutoSend] = useState(false);
-  const [audioPreset, setAudioPreset] = useState(true);
+  const [startHour, setStartHour] = useState("9h");
+  const [endHour, setEndHour] = useState("19h");
+  const [messageType, setMessageType] = useState<"text" | "vocal">("text");
+  const [autoRDV, setAutoRDV] = useState(false);
   const [targetHot, setTargetHot] = useState(true);
   const [targetWarm, setTargetWarm] = useState(true);
-  const [targetCold, setTargetCold] = useState(false);
+  const [targetCold, setTargetCold] = useState(true);
+
+  const hours = Array.from({ length: 15 }, (_, i) => `${i + 6}h`);
 
   return (
     <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-display font-bold text-foreground">Auto-prospection</h2>
+          <p className="text-sm text-muted-foreground">Automatisez vos premiers contacts via WhatsApp</p>
+        </div>
+        <Button variant="outline" size="sm" className="text-xs gap-1.5 font-display">
+          <MessageSquare className="h-3.5 w-3.5" />
+          Historique
+        </Button>
+      </div>
+
       {/* Meta Warning Banner */}
-      <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/10 border border-primary/30">
-        <AlertTriangle className="h-5 w-5 text-primary shrink-0" />
-        <div className="flex-1">
-          <p className="text-sm font-medium text-foreground">Avertissement Meta</p>
-          <p className="text-xs text-muted-foreground">
-            L'automatisation WhatsApp enfreint les conditions d'utilisation de Meta. Utilisez cette fonctionnalité à vos risques. Nos protections anti-blocage minimisent les risques.
+      <div className="flex items-start gap-3 p-4 rounded-lg bg-primary/10 border border-primary/30">
+        <AlertTriangle className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+        <div>
+          <p className="text-sm font-bold text-primary">Avertissement important</p>
+          <p className="text-xs text-foreground mt-0.5">
+            L'utilisation de WhatsApp Web pour l'automatisation viole les conditions d'utilisation de Meta. Votre compte personnel pourrait être banni. Utilisez à vos propres risques.
           </p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* QR Connection */}
-        <Card className="bg-card border-border">
-          <CardContent className="p-4">
-            <h3 className="font-display font-bold text-sm uppercase tracking-wider text-foreground mb-4">
-              Connexion WhatsApp
-            </h3>
-            <div className="bg-background rounded-lg p-6 flex flex-col items-center gap-4 border border-border">
-              {!connected ? (
-                <>
-                  <QrCode className="h-28 w-28 text-muted-foreground" />
-                  <p className="text-sm text-muted-foreground text-center">
-                    Scannez le QR Code avec WhatsApp pour connecter votre compte
-                  </p>
-                  <Badge variant="destructive" className="text-[10px] font-display">DÉCONNECTÉ</Badge>
-                  <Button variant="outline" size="sm" className="text-xs" onClick={() => setConnected(true)}>
-                    Simuler connexion
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <div className="h-16 w-16 rounded-full bg-success/20 flex items-center justify-center">
-                    <MessageSquare className="h-8 w-8 text-success" />
-                  </div>
-                  <p className="text-sm text-foreground font-medium">+33 6 12 34 56 78</p>
-                  <Badge variant="success" className="text-[10px] font-display">CONNECTÉ</Badge>
-                  <Button variant="outline" size="sm" className="text-xs" onClick={() => setConnected(false)}>
-                    Déconnecter
-                  </Button>
-                </>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Message Vocal */}
-        <Card className="bg-card border-border">
-          <CardContent className="p-4">
-            <h3 className="font-display font-bold text-sm uppercase tracking-wider text-foreground mb-4">
-              Message Vocal
-            </h3>
-            <div className="bg-background rounded-lg p-6 flex flex-col items-center gap-4 border border-border">
-              <Button
-                variant="outline"
-                className="h-20 w-20 rounded-full border-2 border-primary hover:bg-primary/10 transition-all"
-              >
-                <Mic className="h-8 w-8 text-primary" />
-              </Button>
-              <p className="text-sm text-muted-foreground">Appuyez pour enregistrer</p>
-              <div className="w-full space-y-2">
-                <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                  <Clock className="h-3 w-3" />
-                  <span>Durée idéale : <span className="text-foreground font-medium">10-20 secondes</span></span>
-                </div>
-                <div className="flex items-center gap-2 text-[11px] text-muted-foreground">
-                  <Mic className="h-3 w-3" />
-                  <span>Conseil : Parlez naturellement, mentionnez le bien</span>
-                </div>
-              </div>
-            </div>
-            <div className="mt-3 p-2 bg-background rounded-lg border border-border">
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-muted-foreground">Audio pré-enregistré</span>
-                <Badge variant="success" className="text-[10px]">audio_intro_v3.ogg</Badge>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Configuration */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <Card className="bg-card border-border">
-          <CardContent className="p-4">
-            <h3 className="font-display font-bold text-sm uppercase tracking-wider text-foreground mb-3">
-              Configuration d'envoi
-            </h3>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
-                <span className="text-sm text-foreground">Envoi automatique</span>
-                <Switch checked={autoSend} onCheckedChange={setAutoSend} />
-              </div>
-              <div className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
-                <span className="text-sm text-foreground">Audio pré-enregistré</span>
-                <Switch checked={audioPreset} onCheckedChange={setAudioPreset} />
-              </div>
-              <div className="p-3 bg-background rounded-lg border border-border">
-                <div className="flex items-center gap-2 mb-2">
-                  <Clock className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm text-foreground">Plages horaires</span>
-                </div>
-                <div className="flex gap-2">
-                  <Input className="h-8 text-xs bg-card" defaultValue="08:00" />
-                  <span className="text-muted-foreground self-center">—</span>
-                  <Input className="h-8 text-xs bg-card" defaultValue="20:00" />
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="space-y-4">
-          {/* Lead targets */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* LEFT COLUMN */}
+        <div className="space-y-6">
+          {/* Connexion WhatsApp */}
           <Card className="bg-card border-border">
-            <CardContent className="p-4">
-              <h3 className="font-display font-bold text-sm uppercase tracking-wider text-foreground mb-3">
-                Cibles par chaleur
-              </h3>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between p-2.5 bg-background rounded-lg border border-border">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-1">
+                <QrCode className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-bold text-foreground">Connexion WhatsApp</h3>
+              </div>
+              <p className="text-sm text-muted-foreground mb-4">
+                Scannez le QR code avec votre téléphone pour connecter WhatsApp
+              </p>
+
+              {!connected ? (
+                <div className="flex items-center gap-3">
                   <div className="flex items-center gap-2">
-                    <div className="h-2.5 w-2.5 rounded-full bg-destructive" />
-                    <span className="text-sm text-foreground">Leads Chauds</span>
+                    <span className="h-2.5 w-2.5 rounded-full bg-muted-foreground" />
+                    <span className="text-sm text-foreground">Déconnecté</span>
                   </div>
-                  <Switch checked={targetHot} onCheckedChange={setTargetHot} />
                 </div>
-                <div className="flex items-center justify-between p-2.5 bg-background rounded-lg border border-border">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2.5 w-2.5 rounded-full bg-primary" />
-                    <span className="text-sm text-foreground">Leads Tièdes</span>
-                  </div>
-                  <Switch checked={targetWarm} onCheckedChange={setTargetWarm} />
+              ) : (
+                <div className="flex items-center gap-2">
+                  <span className="h-2.5 w-2.5 rounded-full bg-success" />
+                  <span className="text-sm text-foreground font-medium">Connecté — +33 6 12 34 56 78</span>
                 </div>
-                <div className="flex items-center justify-between p-2.5 bg-background rounded-lg border border-border">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2.5 w-2.5 rounded-full bg-info" />
-                    <span className="text-sm text-foreground">Leads Froids</span>
-                  </div>
-                  <Switch checked={targetCold} onCheckedChange={setTargetCold} />
-                </div>
+              )}
+
+              <div className="flex items-center gap-2 mt-4">
+                <Button
+                  variant={connected ? "outline" : "default"}
+                  size="sm"
+                  className="text-xs gap-1.5"
+                  onClick={() => setConnected(!connected)}
+                >
+                  <MessageSquare className="h-3.5 w-3.5" />
+                  {connected ? "Déconnecter" : "Connecter WhatsApp"}
+                </Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <RefreshCw className="h-3.5 w-3.5 text-muted-foreground" />
+                </Button>
               </div>
             </CardContent>
           </Card>
 
-          {/* Anti-blocage */}
+          {/* Message Vocal Personnalisé */}
           <Card className="bg-card border-border">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-2 mb-3">
-                <Shield className="h-4 w-4 text-success" />
-                <h3 className="font-display font-bold text-sm uppercase tracking-wider text-foreground">
-                  Protection anti-blocage
-                </h3>
+            <CardContent className="p-6">
+              <div className="flex items-center gap-2 mb-1">
+                <Mic className="h-5 w-5 text-muted-foreground" />
+                <h3 className="text-lg font-bold text-foreground">Message Vocal Personnalisé</h3>
               </div>
-              <div className="flex flex-wrap gap-2">
-                <Badge variant="success" className="text-[10px]">Délais aléatoires 2-4 min</Badge>
-                <Badge variant="success" className="text-[10px]">Limite 50 msg/jour</Badge>
-                <Badge variant="success" className="text-[10px]">Rotation numéros</Badge>
+              <p className="text-sm text-muted-foreground mb-4">
+                Enregistrez votre propre message vocal pour une prospection plus authentique et personnelle. Les prospects recevront votre voix au lieu d'un message texte.
+              </p>
+
+              {/* Conseils */}
+              <div className="bg-background rounded-lg p-4 border border-border mb-6">
+                <div className="flex items-center gap-2 mb-2">
+                  <AlertTriangle className="h-4 w-4 text-muted-foreground" />
+                  <span className="text-sm font-bold text-foreground">Conseils pour un bon message :</span>
+                </div>
+                <ul className="space-y-1.5 text-sm text-foreground ml-6">
+                  <li className="list-disc">Durée idéale : 10-20 secondes</li>
+                  <li className="list-disc">Présentez-vous et mentionnez l'annonce</li>
+                  <li className="list-disc">Proposez un rendez-vous ou un appel</li>
+                  <li className="list-disc">Parlez clairement et naturellement</li>
+                </ul>
+              </div>
+
+              {/* Mic Button */}
+              <div className="flex flex-col items-center gap-4">
+                <button className="h-24 w-24 rounded-full bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors">
+                  <Mic className="h-10 w-10 text-muted-foreground" />
+                </button>
+                <Button
+                  variant="default"
+                  className="gap-2 text-sm px-8"
+                  onClick={() => toast.info("🎙️ Enregistrement en cours...")}
+                >
+                  <Mic className="h-4 w-4" />
+                  Commencer l'enregistrement
+                </Button>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* RIGHT COLUMN — Configuration */}
+        <Card className="bg-card border-border h-fit">
+          <CardContent className="p-6">
+            <div className="flex items-center gap-2 mb-1">
+              <Shield className="h-5 w-5 text-muted-foreground" />
+              <h3 className="text-lg font-bold text-foreground">Configuration</h3>
+            </div>
+            <p className="text-sm text-muted-foreground mb-6">
+              Paramètres de l'envoi automatique de messages
+            </p>
+
+            <div className="space-y-6">
+              {/* Envoi automatique */}
+              <div>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-bold text-foreground">Envoi automatique</p>
+                    <p className="text-xs text-muted-foreground">Envoyer un message aux nouveaux leads avec téléphone</p>
+                  </div>
+                  <Switch checked={autoSend} onCheckedChange={setAutoSend} />
+                </div>
+              </div>
+
+              {/* Horaires d'envoi */}
+              <div>
+                <p className="text-sm font-bold text-foreground mb-1">Horaires d'envoi</p>
+                <p className="text-xs text-muted-foreground mb-3">Plage horaire pendant laquelle les messages peuvent être envoyés</p>
+                <div className="flex items-center gap-3">
+                  <span className="text-sm text-muted-foreground">De</span>
+                  <Select value={startHour} onValueChange={setStartHour}>
+                    <SelectTrigger className="w-20 h-9 text-sm bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {hours.map(h => <SelectItem key={h} value={h}>{h}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                  <span className="text-sm text-muted-foreground">à</span>
+                  <Select value={endHour} onValueChange={setEndHour}>
+                    <SelectTrigger className="w-20 h-9 text-sm bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {hours.map(h => <SelectItem key={h} value={h}>{h}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-1.5">Défaut : 9h - 19h (heure de Paris)</p>
+              </div>
+
+              {/* Type de message */}
+              <div>
+                <p className="text-sm font-bold text-foreground mb-3">Type de message à envoyer</p>
+                <div className="space-y-2">
+                  <div
+                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                      messageType === "text" ? "border-primary bg-primary/5" : "border-border bg-background"
+                    }`}
+                    onClick={() => setMessageType("text")}
+                  >
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${
+                          messageType === "text" ? "border-primary" : "border-muted-foreground"
+                        }`}>
+                          {messageType === "text" && <div className="h-2 w-2 rounded-full bg-primary" />}
+                        </div>
+                        <div>
+                          <p className="text-sm font-bold text-foreground">Message texte</p>
+                          <p className="text-xs text-muted-foreground">Envoi du template texte configuré</p>
+                        </div>
+                      </div>
+                      {messageType === "text" && (
+                        <Badge variant="default" className="text-[10px] font-display">Actif</Badge>
+                      )}
+                    </div>
+                  </div>
+                  <div
+                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${
+                      messageType === "vocal" ? "border-primary bg-primary/5" : "border-border bg-background"
+                    }`}
+                    onClick={() => setMessageType("vocal")}
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className={`h-4 w-4 rounded-full border-2 flex items-center justify-center ${
+                        messageType === "vocal" ? "border-primary" : "border-muted-foreground"
+                      }`}>
+                        {messageType === "vocal" && <div className="h-2 w-2 rounded-full bg-primary" />}
+                      </div>
+                      <div>
+                        <p className={`text-sm ${messageType === "vocal" ? "font-bold text-foreground" : "text-muted-foreground"}`}>Message vocal</p>
+                        <p className="text-xs text-muted-foreground">Enregistrez d'abord un message vocal</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Rappels RDV */}
+              <div className="flex items-start gap-3">
+                <Bell className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-bold text-foreground">Rappels automatiques RDV</p>
+                      <p className="text-xs text-muted-foreground">Envoyer des rappels avant les rendez-vous (veille 18h, jour J 8h)</p>
+                    </div>
+                    <Switch checked={autoRDV} onCheckedChange={setAutoRDV} />
+                  </div>
+                </div>
+              </div>
+
+              {/* Températures */}
+              <div>
+                <p className="text-sm font-bold text-foreground mb-1">Températures à prospecter</p>
+                <p className="text-xs text-muted-foreground mb-3">Choisir quels leads contacter automatiquement</p>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1.5">
+                    <Checkbox checked={targetHot} onCheckedChange={(v) => setTargetHot(!!v)} />
+                    <Badge variant="hot" className="text-[10px] font-display">Chaud</Badge>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Checkbox checked={targetWarm} onCheckedChange={(v) => setTargetWarm(!!v)} />
+                    <Badge variant="default" className="text-[10px] font-display">Tiède</Badge>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <Checkbox checked={targetCold} onCheckedChange={(v) => setTargetCold(!!v)} />
+                    <Badge variant="cold" className="text-[10px] font-display">Froid</Badge>
+                  </div>
+                </div>
+                <p className="text-[11px] text-muted-foreground mt-2">Les leads "rejetés" (qui refusent les pros) ne sont jamais contactés</p>
+              </div>
+
+              {/* Protection anti-blocage */}
+              <div>
+                <div className="flex items-center gap-2 mb-3">
+                  <Shield className="h-4 w-4 text-primary" />
+                  <span className="text-sm font-bold text-foreground">Protection anti-blocage</span>
+                  <Badge variant="default" className="text-[10px] font-display">Active</Badge>
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2 p-2.5 bg-background rounded-lg border border-border">
+                    <Shield className="h-3.5 w-3.5 text-success shrink-0" />
+                    <span className="text-[11px] text-foreground">Délais aléatoires 2-4 min</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 bg-background rounded-lg border border-border">
+                    <Shield className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <span className="text-[11px] text-foreground">Simulation de frappe humaine</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 bg-background rounded-lg border border-border">
+                    <Clock className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+                    <span className="text-[11px] text-foreground">Horaires: 8h - 20h uniquement</span>
+                  </div>
+                  <div className="flex items-center gap-2 p-2.5 bg-background rounded-lg border border-border">
+                    <MessageSquare className="h-3.5 w-3.5 text-primary shrink-0" />
+                    <span className="text-[11px] text-foreground">Limite 50 msg/jour max</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Save Button */}
+              <Button
+                variant="default"
+                className="w-full gap-2 text-sm font-display uppercase"
+                onClick={() => toast.success("✅ Configuration sauvegardée")}
+              >
+                <Check className="h-4 w-4" />
+                Sauvegarder
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
