@@ -65,7 +65,7 @@ const Pipeline = () => {
   const [heatFilter, setHeatFilter] = useState<string | null>(null);
   const [sourceFilter, setSourceFilter] = useState<string | null>(null);
   const [phoneFilter, setPhoneFilter] = useState<string | null>(null);
-  const [viewMode, setViewMode] = useState<"kanban" | "grid">("kanban");
+  const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
 
   const filteredLeads = leads.filter((lead) => {
     if (heatFilter && lead.heat !== heatFilter) return false;
@@ -113,13 +113,13 @@ const Pipeline = () => {
             Kanban
           </Button>
           <Button
-            variant={viewMode === "grid" ? "default" : "ghost"}
+            variant={viewMode === "list" ? "default" : "ghost"}
             size="sm"
             className="h-8 px-3 text-xs font-display uppercase"
-            onClick={() => setViewMode("grid")}
+            onClick={() => setViewMode("list")}
           >
             <LayoutGrid className="h-3.5 w-3.5 mr-1.5" />
-            Grille
+            Liste
           </Button>
           <Button variant="ghost" size="sm" className="h-8 px-3 text-xs font-display uppercase">
             <RefreshCw className="h-3.5 w-3.5 mr-1.5" />
@@ -273,85 +273,139 @@ const Pipeline = () => {
       </div>
 
       {/* Kanban Board */}
-      <ScrollArea className="w-full">
-        <div className="flex gap-3 pb-4" style={{ minWidth: columns.length * 200 }}>
-          {columns.map((col) => {
-            const colLeads = filteredLeads.filter((l) => l.status === col.key);
-            return (
-              <div key={col.key} className="w-[200px] shrink-0">
-                {/* Column Header */}
-                <div className="flex items-center gap-2 mb-3 px-1">
-                  <span className={`h-2.5 w-2.5 rounded-full shrink-0 ${col.dotColor}`} />
-                  <h3 className="font-display text-[10px] font-bold uppercase tracking-wider text-muted-foreground truncate">
-                    {col.label}
-                  </h3>
-                  {col.isNew && (
-                    <Badge variant="info" className="text-[8px] h-4 px-1.5 font-display shrink-0">
-                      NOUVEAU
+      {viewMode === "kanban" ? (
+        <ScrollArea className="w-full">
+          <div className="flex gap-3 pb-4" style={{ minWidth: columns.length * 200 }}>
+            {columns.map((col) => {
+              const colLeads = filteredLeads.filter((l) => l.status === col.key);
+              return (
+                <div key={col.key} className="w-[200px] shrink-0">
+                  <div className="flex items-center gap-2 mb-3 px-1">
+                    <span className={`h-2.5 w-2.5 rounded-full shrink-0 ${col.dotColor}`} />
+                    <h3 className="font-display text-[10px] font-bold uppercase tracking-wider text-muted-foreground truncate">
+                      {col.label}
+                    </h3>
+                    {col.isNew && (
+                      <Badge variant="info" className="text-[8px] h-4 px-1.5 font-display shrink-0">
+                        NOUVEAU
+                      </Badge>
+                    )}
+                    <Badge variant="secondary" className="text-[10px] font-display h-5 min-w-[20px] flex items-center justify-center ml-auto shrink-0">
+                      {colLeads.length}
                     </Badge>
-                  )}
-                  <Badge variant="secondary" className="text-[10px] font-display h-5 min-w-[20px] flex items-center justify-center ml-auto shrink-0">
-                    {colLeads.length}
-                  </Badge>
-                </div>
-
-                {/* Column Content */}
-                <div className="space-y-2 min-h-[300px]">
-                  {colLeads.length === 0 ? (
-                    <div className="border border-dashed border-border rounded-lg p-8 flex flex-col items-center justify-center">
-                      <p className="font-display text-3xl font-bold text-muted-foreground/30 mb-1">0</p>
-                      <p className="font-display text-[10px] uppercase tracking-wider text-muted-foreground text-center">
-                        Aucun lead
-                      </p>
-                      <p className="text-[9px] text-muted-foreground/60 mt-1">
-                        Déposez un lead ici
-                      </p>
-                    </div>
-                  ) : (
-                    colLeads.map((lead) => (
-                      <Card key={lead.id} className="bg-card border-border hover:border-primary/40 transition-colors cursor-pointer group">
-                        <CardContent className="p-3">
-                          <div className="flex items-start justify-between mb-2">
-                            <div className="flex items-center gap-2 min-w-0">
-                              <div className="h-7 w-7 bg-muted rounded-sm flex items-center justify-center shrink-0">
-                                <User className="h-3 w-3 text-muted-foreground" />
+                  </div>
+                  <div className="space-y-2 min-h-[300px]">
+                    {colLeads.length === 0 ? (
+                      <div className="border border-dashed border-border rounded-lg p-8 flex flex-col items-center justify-center">
+                        <p className="font-display text-3xl font-bold text-muted-foreground/30 mb-1">0</p>
+                        <p className="font-display text-[10px] uppercase tracking-wider text-muted-foreground text-center">Aucun lead</p>
+                      </div>
+                    ) : (
+                      colLeads.map((lead) => (
+                        <Card key={lead.id} className="bg-card border-border hover:border-primary/40 transition-colors cursor-pointer group">
+                          <CardContent className="p-3">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-center gap-2 min-w-0">
+                                <div className="h-7 w-7 bg-muted rounded-sm flex items-center justify-center shrink-0">
+                                  <User className="h-3 w-3 text-muted-foreground" />
+                                </div>
+                                <div className="min-w-0">
+                                  <p className="text-xs font-medium text-foreground truncate">{lead.name}</p>
+                                  <p className="text-[10px] text-muted-foreground">{lead.ville}</p>
+                                </div>
                               </div>
-                              <div className="min-w-0">
-                                <p className="text-xs font-medium text-foreground truncate">{lead.name}</p>
-                                <p className="text-[10px] text-muted-foreground">{lead.ville}</p>
-                              </div>
-                            </div>
-                            <Badge variant={lead.source === "LBC" ? "default" : lead.source === "LC" ? "violet" : "info"} className="text-[8px] h-4 font-display shrink-0">
-                              {lead.source}
-                            </Badge>
-                          </div>
-                          <p className="text-[11px] text-foreground mb-1 truncate">{lead.property}</p>
-                          <div className="flex items-center justify-between">
-                            <p className="text-xs font-display font-bold text-foreground">{lead.prix}</p>
-                            <div className="flex items-center gap-1">
-                              {lead.hasPhone && <Phone className="h-3 w-3 text-success" />}
-                              <Badge variant={lead.heat === "hot" ? "hot" : lead.heat === "warm" ? "default" : "cold"} className="text-[8px] h-4">
-                                {lead.heat === "hot" ? "🔥" : lead.heat === "warm" ? "🌤" : "❄️"}
+                              <Badge variant={lead.source === "LBC" ? "default" : lead.source === "LC" ? "violet" : "info"} className="text-[8px] h-4 font-display shrink-0">
+                                {lead.source}
                               </Badge>
                             </div>
-                          </div>
-                          {lead.lastContact && (
-                            <div className="flex items-center gap-1 mt-2 text-[10px] text-primary">
-                              <Clock className="h-3 w-3" />
-                              {lead.lastContact}
+                            <p className="text-[11px] text-foreground mb-1 truncate">{lead.property}</p>
+                            <div className="flex items-center justify-between">
+                              <p className="text-xs font-display font-bold text-foreground">{lead.prix}</p>
+                              <div className="flex items-center gap-1">
+                                {lead.hasPhone && <Phone className="h-3 w-3 text-success" />}
+                                <Badge variant={lead.heat === "hot" ? "hot" : lead.heat === "warm" ? "default" : "cold"} className="text-[8px] h-4">
+                                  {lead.heat === "hot" ? "🔥" : lead.heat === "warm" ? "🌤" : "❄️"}
+                                </Badge>
+                              </div>
                             </div>
-                          )}
-                        </CardContent>
-                      </Card>
-                    ))
-                  )}
+                            {lead.lastContact && (
+                              <div className="flex items-center gap-1 mt-2 text-[10px] text-primary">
+                                <Clock className="h-3 w-3" />
+                                {lead.lastContact}
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      ))
+                    )}
+                  </div>
                 </div>
+              );
+            })}
+          </div>
+          <ScrollBar orientation="horizontal" />
+        </ScrollArea>
+      ) : (
+        /* List View */
+        <Card className="bg-card border-border">
+          <CardContent className="p-0">
+            <div className="divide-y divide-border">
+              <div className="grid grid-cols-12 gap-2 px-4 py-2 text-[10px] font-display uppercase tracking-wider text-muted-foreground font-bold">
+                <div className="col-span-3">Vendeur</div>
+                <div className="col-span-3">Bien</div>
+                <div className="col-span-1">Prix</div>
+                <div className="col-span-1">Source</div>
+                <div className="col-span-2">Statut</div>
+                <div className="col-span-1">Temp.</div>
+                <div className="col-span-1">Tél</div>
               </div>
-            );
-          })}
-        </div>
-        <ScrollBar orientation="horizontal" />
-      </ScrollArea>
+              {filteredLeads.length === 0 ? (
+                <div className="p-8 text-center text-sm text-muted-foreground">Aucun lead trouvé</div>
+              ) : (
+                filteredLeads.map((lead) => {
+                  const col = columns.find(c => c.key === lead.status);
+                  return (
+                    <div key={lead.id} className="grid grid-cols-12 gap-2 px-4 py-3 items-center hover:bg-accent/30 transition-colors cursor-pointer">
+                      <div className="col-span-3 flex items-center gap-2">
+                        <div className="h-7 w-7 bg-muted rounded-sm flex items-center justify-center shrink-0">
+                          <User className="h-3 w-3 text-muted-foreground" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-sm font-medium text-foreground truncate">{lead.name}</p>
+                          <p className="text-[10px] text-muted-foreground">{lead.ville}</p>
+                        </div>
+                      </div>
+                      <div className="col-span-3">
+                        <p className="text-sm text-foreground truncate">{lead.property}</p>
+                      </div>
+                      <div className="col-span-1">
+                        <p className="text-xs font-display font-bold text-foreground">{lead.prix}</p>
+                      </div>
+                      <div className="col-span-1">
+                        <Badge variant={lead.source === "LBC" ? "default" : lead.source === "LC" ? "violet" : "info"} className="text-[8px] font-display">
+                          {lead.source}
+                        </Badge>
+                      </div>
+                      <div className="col-span-2 flex items-center gap-1.5">
+                        <span className={`h-2 w-2 rounded-full shrink-0 ${col?.dotColor}`} />
+                        <span className="text-xs text-foreground truncate">{col?.label}</span>
+                      </div>
+                      <div className="col-span-1">
+                        <Badge variant={lead.heat === "hot" ? "hot" : lead.heat === "warm" ? "default" : "cold"} className="text-[8px]">
+                          {lead.heat === "hot" ? "🔥" : lead.heat === "warm" ? "🌤" : "❄️"}
+                        </Badge>
+                      </div>
+                      <div className="col-span-1">
+                        {lead.hasPhone ? <Phone className="h-3.5 w-3.5 text-success" /> : <span className="text-[10px] text-muted-foreground">—</span>}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </AppLayout>
   );
 };
