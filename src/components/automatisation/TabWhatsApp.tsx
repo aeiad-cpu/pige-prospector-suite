@@ -21,6 +21,18 @@ const TabWhatsApp = () => {
   const [targetWarm, setTargetWarm] = useState(true);
   const [targetCold, setTargetCold] = useState(true);
 
+  // Templates
+  const [tplPremierContact, setTplPremierContact] = useState("Bonjour {prenom},\n\nJe me permets de vous contacter suite à votre annonce pour votre {type_bien} à {ville}.\n\nJe suis conseiller immobilier spécialisé dans votre secteur et j'ai actuellement des acquéreurs qualifiés en recherche active.\n\nSeriez-vous ouvert à un échange rapide ?\n\nCordialement,\n{agent}");
+  const [tplRappel, setTplRappel] = useState("Bonjour {prenom},\n\nJe vous ai contacté par téléphone concernant votre {type_bien} à {ville} mais n'ai pas pu vous joindre.\n\nN'hésitez pas à me rappeler au {tel_agent} ou à me répondre ici.\n\nCordialement,\n{agent}");
+  const [tplAvantAppel, setTplAvantAppel] = useState("Bonjour {prenom},\n\nJe suis {agent}, conseiller immobilier. Je vais vous appeler dans quelques instants au sujet de votre {type_bien} à {ville} ({prix}).\n\nÀ tout de suite !");
+  const [editingTemplate, setEditingTemplate] = useState<string | null>(null);
+
+  // RDV Messages
+  const [agenceAdresse, setAgenceAdresse] = useState("123 rue de Paris, 75001 Paris");
+  const [rdvConfirmation, setRdvConfirmation] = useState("Bonjour {prenom}, votre RDV est confirmé le {date} à {heure}. Adresse: {adresse}. À bientôt !");
+  const [rdvVeille, setRdvVeille] = useState("Rappel : RDV demain à {heure} pour votre {marque} {modele}. Adresse: {adresse}. À demain !");
+  const [rdvJourJ, setRdvJourJ] = useState("Rappel : RDV aujourd'hui à {heure}. Nous vous attendons !");
+
   const hours = Array.from({ length: 15 }, (_, i) => `${i + 6}h`);
 
   return (
