@@ -14,6 +14,7 @@ import NoShows from "./pages/NoShows";
 import Equipe from "./pages/Equipe";
 import Taches from "./pages/Taches";
 import Agenda from "./pages/Agenda";
+import CockpitOmnicanal from "./pages/CockpitOmnicanal";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
