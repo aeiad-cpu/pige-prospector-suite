@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ListChecks, Clock, Plus, AlertTriangle, CalendarDays, CheckCircle2, ChevronDown, ChevronUp, Trash2 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
@@ -33,10 +34,16 @@ const initialTasks: Task[] = [
 ];
 
 const statusConfig = {
-  retard: { label: "En retard", color: "bg-destructive/10 text-destructive", dot: "bg-destructive", icon: AlertTriangle, cardBg: "bg-card border-border" },
-  aujourdhui: { label: "Aujourd'hui", color: "bg-primary/10 text-primary", dot: "bg-primary", icon: Clock, cardBg: "bg-card border-border" },
-  avenir: { label: "À venir", color: "bg-info/10 text-info", dot: "bg-info", icon: CalendarDays, cardBg: "bg-info text-info-foreground" },
-  terminee: { label: "Terminées", color: "bg-success/10 text-success", dot: "bg-success", icon: CheckCircle2, cardBg: "bg-success text-success-foreground" },
+  retard: { label: "En retard", dot: "bg-destructive", icon: AlertTriangle, cardBg: "bg-card border-border" },
+  aujourdhui: { label: "Aujourd'hui", dot: "bg-primary", icon: Clock, cardBg: "bg-card border-border" },
+  avenir: { label: "À venir", dot: "bg-info", icon: CalendarDays, cardBg: "bg-info text-info-foreground" },
+  terminee: { label: "Terminées", dot: "bg-success", icon: CheckCircle2, cardBg: "bg-success text-success-foreground" },
+};
+
+const priorityConfig = {
+  haute: { label: "HAUTE", variant: "destructive" as const },
+  moyenne: { label: "MOYENNE", variant: "secondary" as const },
+  basse: { label: "BASSE", variant: "secondary" as const },
 };
 
 const Taches = () => {
@@ -46,8 +53,6 @@ const Taches = () => {
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     retard: true, aujourdhui: true, avenir: true, terminee: true,
   });
-
-  // New task form
   const [newTitle, setNewTitle] = useState("");
   const [newDesc, setNewDesc] = useState("");
   const [newPriority, setNewPriority] = useState<"haute" | "moyenne" | "basse">("moyenne");
@@ -61,31 +66,21 @@ const Taches = () => {
     terminee: tasks.filter(t => t.done).length,
   };
 
-  const toggleSection = (key: string) => {
-    setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
-  };
+  const toggleSection = (key: string) => setExpandedSections(prev => ({ ...prev, [key]: !prev[key] }));
+  const toggleDone = (id: number) => setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done, status: !t.done ? "terminee" : t.status } : t));
+  const deleteTask = (id: number) => { setTasks(prev => prev.filter(t => t.id !== id)); toast("Tâche supprimée"); };
 
-  const toggleDone = (id: number) => {
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, done: !t.done, status: !t.done ? "terminee" : t.status } : t));
-  };
-
-  const deleteTask = (id: number) => {
-    setTasks(prev => prev.filter(t => t.id !== id));
-    toast("Tâche supprimée");
+  const changePriority = (id: number, priority: "haute" | "moyenne" | "basse") => {
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, priority } : t));
+    toast.success(`Priorité changée : ${priority}`);
   };
 
   const createTask = () => {
     if (!newTitle.trim()) return;
     const task: Task = {
-      id: Date.now(),
-      label: newTitle.trim(),
-      description: newDesc.trim(),
-      priority: newPriority,
-      dueDate: "À planifier",
-      status: "avenir",
-      done: false,
-      assignee: newAssignee || "Marc Dupont",
-      lead: newLead || "Aucun lead",
+      id: Date.now(), label: newTitle.trim(), description: newDesc.trim(),
+      priority: newPriority, dueDate: "À planifier", status: "avenir",
+      done: false, assignee: newAssignee || "Marc Dupont", lead: newLead || "Aucun lead",
     };
     setTasks(prev => [task, ...prev]);
     setNewTitle(""); setNewDesc(""); setNewPriority("moyenne"); setNewAssignee(""); setNewLead("");
@@ -94,15 +89,10 @@ const Taches = () => {
   };
 
   const filteredStatuses = (["retard", "aujourdhui", "avenir", "terminee"] as const).filter(s => filter === "all" || filter === s);
-
-  const getTasksForStatus = (status: string) => {
-    if (status === "terminee") return tasks.filter(t => t.done);
-    return tasks.filter(t => t.status === status && !t.done);
-  };
+  const getTasksForStatus = (status: string) => status === "terminee" ? tasks.filter(t => t.done) : tasks.filter(t => t.status === status && !t.done);
 
   return (
     <AppLayout>
-      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-display font-bold text-foreground">Tâches</h1>
@@ -110,9 +100,7 @@ const Taches = () => {
         </div>
         <div className="flex items-center gap-3">
           <Select value={filter} onValueChange={setFilter}>
-            <SelectTrigger className="w-44 h-9 text-xs bg-card">
-              <SelectValue />
-            </SelectTrigger>
+            <SelectTrigger className="w-44 h-9 text-xs bg-card"><SelectValue /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Toutes les tâches</SelectItem>
               <SelectItem value="retard">En retard</SelectItem>
@@ -122,8 +110,7 @@ const Taches = () => {
             </SelectContent>
           </Select>
           <Button variant="attack" size="sm" className="gap-1.5 text-xs" onClick={() => setShowCreate(true)}>
-            <Plus className="h-3.5 w-3.5" />
-            Nouvelle tâche
+            <Plus className="h-3.5 w-3.5" /> Nouvelle tâche
           </Button>
         </div>
       </div>
@@ -157,10 +144,7 @@ const Taches = () => {
             const expanded = expandedSections[status];
             return (
               <div key={status}>
-                <button
-                  className="w-full flex items-center justify-between p-4 border-b border-border hover:bg-accent/30 transition-colors"
-                  onClick={() => toggleSection(status)}
-                >
+                <button className="w-full flex items-center justify-between p-4 border-b border-border hover:bg-accent/30 transition-colors" onClick={() => toggleSection(status)}>
                   <div className="flex items-center gap-2">
                     <span className={`h-2.5 w-2.5 rounded-full ${cfg.dot}`} />
                     <span className="font-display text-sm font-bold text-foreground">{cfg.label}</span>
@@ -177,16 +161,31 @@ const Taches = () => {
                           <p className={`text-sm ${t.done ? "line-through text-muted-foreground" : "text-foreground"}`}>{t.label}</p>
                           {t.description && <p className="text-[11px] text-muted-foreground truncate">{t.description}</p>}
                         </div>
-                        <Badge variant={t.priority === "haute" ? "destructive" : "secondary"} className="text-[8px] font-display">
-                          {t.priority.toUpperCase()}
-                        </Badge>
+                        {/* Clickable priority */}
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <button className="cursor-pointer">
+                              <Badge variant={priorityConfig[t.priority].variant} className="text-[8px] font-display hover:ring-2 hover:ring-ring transition-all">
+                                {priorityConfig[t.priority].label}
+                              </Badge>
+                            </button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-32 p-1" align="center">
+                            {(["haute", "moyenne", "basse"] as const).map(p => (
+                              <button
+                                key={p}
+                                className={`w-full text-left px-3 py-1.5 text-xs rounded hover:bg-accent transition-colors ${t.priority === p ? "font-bold text-primary" : "text-foreground"}`}
+                                onClick={() => changePriority(t.id, p)}
+                              >
+                                {p === "haute" ? "🔴 Haute" : p === "moyenne" ? "🟡 Moyenne" : "🟢 Basse"}
+                              </button>
+                            ))}
+                          </PopoverContent>
+                        </Popover>
                         <span className="text-[10px] text-muted-foreground flex items-center gap-1 min-w-[70px]">
                           <Clock className="h-3 w-3" />{t.dueDate}
                         </span>
-                        <button
-                          className="h-7 w-7 rounded flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors opacity-0 group-hover:opacity-100"
-                          onClick={() => deleteTask(t.id)}
-                        >
+                        <button className="h-7 w-7 rounded flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors opacity-0 group-hover:opacity-100" onClick={() => deleteTask(t.id)}>
                           <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>
@@ -202,9 +201,7 @@ const Taches = () => {
       {/* Create Task Dialog */}
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
         <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Créer une tâche</DialogTitle>
-          </DialogHeader>
+          <DialogHeader><DialogTitle>Créer une tâche</DialogTitle></DialogHeader>
           <div className="space-y-4">
             <div>
               <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-1 block">Titre *</label>
