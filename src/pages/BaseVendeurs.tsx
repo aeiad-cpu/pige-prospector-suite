@@ -152,6 +152,7 @@ const BaseVendeurs = () => {
   const [replyTarget, setReplyTarget] = useState<{ lead: Lead; channel: string } | null>(null);
   const [replyMessage, setReplyMessage] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const [transferLead, setTransferLead] = useState<Lead | null>(null);
 
   const filteredLeads = leads.filter((lead) => {
     if (heatFilter && lead.heat !== heatFilter) return false;
