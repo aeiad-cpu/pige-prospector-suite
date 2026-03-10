@@ -13,9 +13,10 @@ import {
 import {
   Search, LayoutGrid, Columns3, RefreshCw,
   Phone, Clock, Filter, MessageSquare, ChevronLeft, ChevronRight,
-  Home, Send, Sparkles, User,
+  Home, Send, Sparkles, User, ArrowRightLeft,
 } from "lucide-react";
 import { AppLayout } from "@/components/AppLayout";
+import { TransferDialog } from "@/components/TransferDialog";
 import { toast } from "sonner";
 
 type LeadStatus =
@@ -151,6 +152,7 @@ const BaseVendeurs = () => {
   const [replyTarget, setReplyTarget] = useState<{ lead: Lead; channel: string } | null>(null);
   const [replyMessage, setReplyMessage] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
+  const [transferLead, setTransferLead] = useState<Lead | null>(null);
 
   const filteredLeads = leads.filter((lead) => {
     if (heatFilter && lead.heat !== heatFilter) return false;
@@ -245,6 +247,9 @@ const BaseVendeurs = () => {
           </DropdownMenu>
           <Button variant="outline" size="sm" className="h-6 text-[10px] gap-1 px-2" onClick={() => handleCall(lead)}>
             <Phone className="h-2.5 w-2.5" /> Tél
+          </Button>
+          <Button variant="outline" size="sm" className="h-6 text-[10px] gap-1 px-2" onClick={() => setTransferLead(lead)}>
+            <ArrowRightLeft className="h-2.5 w-2.5" />
           </Button>
         </div>
       </CardContent>
@@ -370,6 +375,9 @@ const BaseVendeurs = () => {
                     </DropdownMenu>
                     <Button variant="outline" size="sm" className="h-6 text-[10px] gap-1 px-2" onClick={() => handleCall(lead)}>
                       <Phone className="h-2.5 w-2.5" /> Tél
+                    </Button>
+                    <Button variant="outline" size="sm" className="h-6 text-[10px] gap-1 px-2" onClick={() => setTransferLead(lead)}>
+                      <ArrowRightLeft className="h-2.5 w-2.5" />
                     </Button>
                   </div>
                 </div>
@@ -544,6 +552,14 @@ const BaseVendeurs = () => {
           )}
         </DialogContent>
       </Dialog>
+
+      <TransferDialog
+        open={!!transferLead}
+        onOpenChange={(open) => !open && setTransferLead(null)}
+        propertyName={transferLead?.property}
+        ville={transferLead?.ville}
+        prix={transferLead?.prix}
+      />
     </AppLayout>
   );
 };
