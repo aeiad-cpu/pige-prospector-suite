@@ -146,6 +146,7 @@ const BaseVendeurs = () => {
   const [heatFilter, setHeatFilter] = useState<string | null>(null);
   const [sourceFilter, setSourceFilter] = useState<string | null>(null);
   const [phoneFilter, setPhoneFilter] = useState<string | null>(null);
+  const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<"kanban" | "list">("kanban");
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [currentPhoto, setCurrentPhoto] = useState(0);
