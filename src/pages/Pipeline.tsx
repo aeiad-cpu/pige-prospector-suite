@@ -90,7 +90,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "Laurent Petit",
   },
   {
-    id: 6, property: "T4 dernier étage terrasse 85m²", ville: "Marseille 8ème", prix: "310 000 €", surface: "85m²", pieces: 4, source: "LBC", publishedAt: "Il y a 32 min",
+    id: 6, property: "T4 dernier étage terrasse 85m²", ville: "Marseille 8ème", prix: "310 000 €", surface: "85m²", pieces: 4, source: "LBC", publishedAt: "Il y a 32 min", status: "rdv",
     description: "T4 avec terrasse de 20m², vue mer, 3 chambres, cuisine équipée, parking. Résidence récente avec piscine.",
     photos: ["https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=400&h=260&fit=crop"],
     vendeur: "Claire Bernard", phone: "06 78 90 12 34",
