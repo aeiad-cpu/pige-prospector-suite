@@ -16,6 +16,7 @@ import {
   ChevronRight,
   Target,
   MessageSquare,
+  Lightbulb,
 } from "lucide-react";
 
 const menuGroups = [
