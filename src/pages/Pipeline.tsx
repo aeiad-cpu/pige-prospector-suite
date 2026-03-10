@@ -66,7 +66,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "Jean-Marc Leblanc", phone: "06 12 34 56 78", url: "https://www.leboncoin.fr/ventes_immobilieres/1234567890.htm",
   },
   {
-    id: 2, property: "T3 lumineux 65m²", ville: "Paris 11ème", prix: "520 000 €", surface: "65m²", pieces: 3, source: "LBC", publishedAt: "Il y a 5 min", isNew: true,
+    id: 2, property: "T3 lumineux 65m²", ville: "Paris 11ème", prix: "520 000 €", surface: "65m²", pieces: 3, source: "LBC", publishedAt: "Il y a 5 min", isNew: true, status: "auto_sent",
     description: "Appartement T3 lumineux de 65m² au 4ème étage avec ascenseur. Séjour double, 2 chambres, balcon filant. Parquet chêne.",
     photos: ["https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=400&h=260&fit=crop"],
     vendeur: "Sophie Martin", phone: "06 23 45 67 89",
