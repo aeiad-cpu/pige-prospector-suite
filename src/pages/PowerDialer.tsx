@@ -618,11 +618,76 @@ const PowerDialer = () => {
         </Card>
       </div>
 
+      {/* Real-time Transcription Panel — greyed out */}
+      <Card className="bg-card border-border mb-4 relative">
+        <CardContent className="p-4">
+          <div className="relative opacity-40 pointer-events-none select-none">
+            <div className="flex items-center gap-2 mb-3">
+              <Badge variant="violet" className="text-[10px] font-display uppercase gap-1">
+                <Mic className="h-3 w-3" /> Transcription Live
+              </Badge>
+              <Badge variant="info" className="text-[10px] font-display uppercase gap-1">
+                <Brain className="h-3 w-3" /> Coach IA
+              </Badge>
+              <span className="text-[10px] text-muted-foreground">Appel avec Jean-Marc Leblanc</span>
+            </div>
+
+            <div className="grid grid-cols-3 gap-3">
+              {/* Transcription col */}
+              <div className="col-span-2 bg-background rounded-lg p-3 max-h-[220px] overflow-y-auto">
+                <div className="space-y-2">
+                  {simulatedTranscription.slice(0, Math.max(visibleLines, 8)).map((line, i) => (
+                    <div key={i} className={`flex gap-2 ${line.speaker === "agent" ? "" : "flex-row-reverse"}`}>
+                      <div className={`shrink-0 h-6 w-6 rounded-full flex items-center justify-center text-[9px] font-display font-bold ${
+                        line.speaker === "agent" ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+                      }`}>
+                        {line.speaker === "agent" ? "MD" : "JM"}
+                      </div>
+                      <div className={`max-w-[80%] rounded-lg px-3 py-1.5 text-xs ${
+                        line.speaker === "agent"
+                          ? "bg-primary/10 text-foreground"
+                          : "bg-muted text-foreground"
+                      }`}>
+                        <span className="text-[9px] text-muted-foreground font-mono mr-1.5">{line.time}</span>
+                        {line.text}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* AI Coaching col */}
+              <div className="bg-background rounded-lg p-3 max-h-[220px] overflow-y-auto">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <Sparkles className="h-3.5 w-3.5 text-violet-500" />
+                  <span className="font-display text-[10px] uppercase tracking-wider text-violet-500 font-bold">Conseils IA</span>
+                </div>
+                <div className="space-y-2">
+                  {aiCoachingSuggestions.slice(0, Math.max(Math.floor(visibleLines / 2), 4)).map((s, i) => (
+                    <div key={i} className="p-2 bg-violet-500/5 border border-violet-500/10 rounded text-[11px] text-foreground leading-relaxed">
+                      {s.tip}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Lock overlay */}
+          <div className="absolute inset-0 flex items-center justify-center rounded-lg">
+            <div className="bg-background/80 border border-border rounded-lg px-6 py-3 shadow-lg flex items-center gap-2">
+              <Lock className="h-4 w-4 text-muted-foreground" />
+              <p className="font-display text-sm font-bold text-muted-foreground uppercase tracking-wider">Option à venir</p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Bottom Action Bar */}
       <Card className="bg-card border-border">
         <CardContent className="p-4">
           <div className="flex items-center justify-center gap-4 flex-wrap">
-            <Button variant="success" size="lg" className="gap-2 text-sm">
+            <Button variant="success" size="lg" className="gap-2 text-sm" onClick={() => setShowRdv(true)}>
               <CalendarCheck className="h-5 w-5" />
               RDV Fixé
             </Button>
@@ -642,7 +707,10 @@ const PowerDialer = () => {
               variant="destructive"
               size="lg"
               className="gap-2 text-sm font-display uppercase"
-              onClick={() => setIsCallActive(false)}
+              onClick={() => {
+                setIsCallActive(false);
+                setShowCategorize(true);
+              }}
             >
               <PhoneOff className="h-5 w-5" />
               Raccrocher & Suivant
@@ -650,6 +718,149 @@ const PowerDialer = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Categorization Modal */}
+      <Dialog open={showCategorize} onOpenChange={setShowCategorize}>
+        <DialogContent className="sm:max-w-lg bg-card">
+          <DialogHeader>
+            <DialogTitle className="font-display text-lg">Catégoriser le lead</DialogTitle>
+            <DialogDescription>Qualifiez {vendeur.name} avant de passer au suivant</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-1">
+            {/* Temperature */}
+            <div>
+              <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-2 block">Température du lead</label>
+              <div className="flex gap-2">
+                {heatOptions.map(h => (
+                  <button
+                    key={h.key}
+                    onClick={() => setSelectedHeat(h.key)}
+                    className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-lg border text-sm font-display font-bold transition-colors ${
+                      selectedHeat === h.key
+                        ? h.key === "hot" ? "bg-red-500/10 border-red-500/40 text-red-500"
+                          : h.key === "warm" ? "bg-orange-500/10 border-orange-500/40 text-orange-500"
+                          : "bg-blue-500/10 border-blue-500/40 text-blue-500"
+                        : "border-border text-muted-foreground hover:border-primary/30"
+                    }`}
+                  >
+                    <span className="text-lg">{h.emoji}</span> {h.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Status */}
+            <div>
+              <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-2 block">Statut</label>
+              <div className="grid grid-cols-2 gap-1.5 max-h-[200px] overflow-y-auto">
+                {statusOptions.map(s => (
+                  <button
+                    key={s.key}
+                    onClick={() => {
+                      setSelectedStatus(s.key);
+                      if (s.key === "rdv") {
+                        setShowCategorize(false);
+                        setShowRdv(true);
+                      }
+                    }}
+                    className={`flex items-center gap-2 px-3 py-2 rounded-md border text-xs font-display transition-colors text-left ${
+                      selectedStatus === s.key
+                        ? "bg-primary/10 border-primary/40 text-primary font-bold"
+                        : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
+                    }`}
+                  >
+                    <span>{s.emoji}</span> {s.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Notes */}
+            <div>
+              <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 block">Notes (optionnel)</label>
+              <Input placeholder="Ex: Intéressé mais attend le printemps..." value={categorizeNotes} onChange={(e) => setCategorizeNotes(e.target.value)} className="bg-background" />
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setShowCategorize(false)}>Annuler</Button>
+              <Button
+                variant="attack"
+                disabled={!selectedHeat || !selectedStatus}
+                onClick={() => {
+                  const heat = heatOptions.find(h => h.key === selectedHeat);
+                  const status = statusOptions.find(s => s.key === selectedStatus);
+                  toast.success(`Lead catégorisé : ${heat?.emoji} ${heat?.label} — ${status?.label}`, {
+                    description: categorizeNotes || "Passage au prospect suivant...",
+                  });
+                  setShowCategorize(false);
+                  setSelectedHeat(null);
+                  setSelectedStatus(null);
+                  setCategorizeNotes("");
+                }}
+              >
+                Valider & Suivant
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* RDV Date/Time Modal */}
+      <Dialog open={showRdv} onOpenChange={setShowRdv}>
+        <DialogContent className="sm:max-w-md bg-card">
+          <DialogHeader>
+            <div className="flex items-center gap-2 mb-1">
+              <CalendarCheck className="h-5 w-5 text-success" />
+              <DialogTitle className="font-display text-lg">RDV Fixé</DialogTitle>
+            </div>
+            <DialogDescription>Entrez la date et l'heure du rendez-vous avec {vendeur.name}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 pt-1">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 block">Date *</label>
+                <Input type="date" value={rdvDate} onChange={(e) => setRdvDate(e.target.value)} className="bg-background" />
+              </div>
+              <div>
+                <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 block">Heure *</label>
+                <Input type="time" value={rdvTime} onChange={(e) => setRdvTime(e.target.value)} className="bg-background" />
+              </div>
+            </div>
+            <div>
+              <label className="font-display text-[10px] uppercase tracking-wider text-muted-foreground mb-1.5 block">Notes (optionnel)</label>
+              <Input placeholder="Ex: RDV estimation au domicile..." value={rdvNotes} onChange={(e) => setRdvNotes(e.target.value)} className="bg-background" />
+            </div>
+
+            <div className="p-3 bg-success/5 border border-success/20 rounded-lg">
+              <p className="text-xs text-foreground">
+                📅 Le RDV sera ajouté automatiquement à votre <span className="font-medium">Agenda</span> et un SMS de confirmation sera envoyé à {vendeur.name}.
+              </p>
+            </div>
+
+            <DialogFooter className="gap-2">
+              <Button variant="outline" onClick={() => setShowRdv(false)}>Annuler</Button>
+              <Button
+                variant="success"
+                className="gap-1.5"
+                disabled={!rdvDate || !rdvTime}
+                onClick={() => {
+                  const dateFormatted = new Date(rdvDate).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+                  toast.success(`✅ RDV fixé avec ${vendeur.name}`, {
+                    description: `${dateFormatted} à ${rdvTime}${rdvNotes ? ` — ${rdvNotes}` : ""}`,
+                  });
+                  setShowRdv(false);
+                  setRdvDate("");
+                  setRdvTime("");
+                  setRdvNotes("");
+                  setIsCallActive(false);
+                }}
+              >
+                <CalendarCheck className="h-3.5 w-3.5" /> Confirmer le RDV
+              </Button>
+            </DialogFooter>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Client Card Dialog */}
       <Dialog open={showClientCard} onOpenChange={setShowClientCard}>
