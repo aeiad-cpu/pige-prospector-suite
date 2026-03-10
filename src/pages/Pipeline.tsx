@@ -249,34 +249,32 @@ const Pipeline = () => {
 
   // Shared lead card for kanban
   const renderLeadCard = (lead: Lead) => (
-    <Card key={lead.id} className="bg-card border-border hover:border-primary/40 transition-colors cursor-pointer group">
+    <Card key={lead.id} className="bg-card border-border hover:border-primary/40 transition-colors cursor-pointer group overflow-hidden">
+      {/* Photo du bien */}
+      <div className="relative h-28 w-full" onClick={() => openHistory(lead)}>
+        {lead.photos && lead.photos.length > 0 ? (
+          <img src={lead.photos[0]} alt={lead.property} className="w-full h-full object-cover" />
+        ) : (
+          <div className="w-full h-full bg-muted flex items-center justify-center">
+            <Home className="h-6 w-6 text-muted-foreground" />
+          </div>
+        )}
+        <Badge variant={lead.source === "LBC" ? "default" : lead.source === "LC" ? "violet" : "info"} className="text-[8px] h-4 font-display shrink-0 absolute top-2 right-2">
+          {lead.source}
+        </Badge>
+        <Badge variant={lead.heat === "hot" ? "hot" : lead.heat === "warm" ? "default" : "cold"} className="text-[8px] h-4 absolute top-2 left-2">
+          {lead.heat === "hot" ? "🔥" : lead.heat === "warm" ? "🌤" : "❄️"}
+        </Badge>
+      </div>
       <CardContent className="p-3">
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex items-center gap-2 min-w-0" onClick={() => openHistory(lead)}>
-            <div className="h-7 w-7 bg-muted rounded-sm flex items-center justify-center shrink-0">
-              <User className="h-3 w-3 text-muted-foreground" />
-            </div>
-            <div className="min-w-0">
-              <p className="text-xs font-medium text-foreground truncate">{lead.name}</p>
-              <p className="text-[10px] text-muted-foreground">{lead.ville}</p>
-            </div>
-          </div>
-          <Badge variant={lead.source === "LBC" ? "default" : lead.source === "LC" ? "violet" : "info"} className="text-[8px] h-4 font-display shrink-0">
-            {lead.source}
-          </Badge>
-        </div>
-        <p className="text-[11px] text-foreground mb-1 truncate cursor-pointer" onClick={() => openHistory(lead)}>{lead.property}</p>
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-display font-bold text-foreground">{lead.prix}</p>
-          <div className="flex items-center gap-1">
-            {lead.hasPhone && <Phone className="h-3 w-3 text-success" />}
-            <Badge variant={lead.heat === "hot" ? "hot" : lead.heat === "warm" ? "default" : "cold"} className="text-[8px] h-4">
-              {lead.heat === "hot" ? "🔥" : lead.heat === "warm" ? "🌤" : "❄️"}
-            </Badge>
-          </div>
+        <p className="text-xs font-medium text-foreground truncate" onClick={() => openHistory(lead)}>{lead.property}</p>
+        <p className="text-[10px] text-muted-foreground">{lead.ville}</p>
+        <div className="flex items-center justify-between mt-1.5">
+          <p className="text-xs font-display font-bold text-primary">{lead.prix}</p>
+          {lead.hasPhone && <Phone className="h-3 w-3 text-success" />}
         </div>
         {lead.lastContact && (
-          <div className="flex items-center gap-1 mt-2 text-[10px] text-primary">
+          <div className="flex items-center gap-1 mt-1.5 text-[10px] text-primary">
             <Clock className="h-3 w-3" />{lead.lastContact}
           </div>
         )}
