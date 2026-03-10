@@ -60,60 +60,90 @@ const menuGroups = [
 
 export function AppSidebar() {
   const [collapsed, setCollapsed] = useState(false);
+  const [transferOpen, setTransferOpen] = useState(false);
+  const [signupOpen, setSignupOpen] = useState(false);
   const location = useLocation();
 
   return (
-    <aside
-      className={`fixed left-0 top-0 h-screen bg-sidebar border-r border-sidebar-border flex flex-col z-50 transition-all duration-200 ${
-        collapsed ? "w-16" : "w-60"
-      }`}
-    >
-      <div className="h-14 flex items-center px-4 border-b border-sidebar-border gap-2">
-        <Target className="h-6 w-6 text-primary shrink-0" />
-        {!collapsed && (
-          <span className="font-display text-lg font-bold text-foreground tracking-wider">
-            PIGE IMMO
-          </span>
-        )}
-      </div>
+    <>
+      <aside
+        className={`fixed left-0 top-0 h-screen bg-sidebar border-r border-sidebar-border flex flex-col z-50 transition-all duration-200 ${
+          collapsed ? "w-16" : "w-60"
+        }`}
+      >
+        <div className="h-14 flex items-center px-4 border-b border-sidebar-border gap-2">
+          <Target className="h-6 w-6 text-primary shrink-0" />
+          {!collapsed && (
+            <span className="font-display text-lg font-bold text-foreground tracking-wider">
+              PIGE IMMO
+            </span>
+          )}
+        </div>
 
-      <nav className="flex-1 overflow-y-auto py-2">
-        {menuGroups.map((group) => (
-          <div key={group.label} className="mb-2">
+        <nav className="flex-1 overflow-y-auto py-2">
+          {menuGroups.map((group) => (
+            <div key={group.label} className="mb-2">
+              {!collapsed && (
+                <div className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-muted-foreground">
+                  {group.label}
+                </div>
+              )}
+              {group.items.map((item) => {
+                const isActive = location.pathname === item.url;
+                return (
+                  <NavLink
+                    key={item.url}
+                    to={item.url}
+                    end
+                    className={`flex items-center gap-3 px-4 py-2 mx-1 rounded-md text-sm transition-colors ${
+                      isActive
+                        ? "bg-sidebar-accent text-primary font-medium"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground"
+                    } ${collapsed ? "justify-center" : ""}`}
+                    activeClassName=""
+                  >
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    {!collapsed && <span>{item.title}</span>}
+                  </NavLink>
+                );
+              })}
+            </div>
+          ))}
+
+          {/* Quick actions */}
+          <div className="mb-2">
             {!collapsed && (
               <div className="px-4 py-2 text-[10px] font-display font-bold uppercase tracking-widest text-muted-foreground">
-                {group.label}
+                Actions
               </div>
             )}
-            {group.items.map((item) => {
-              const isActive = location.pathname === item.url;
-              return (
-                <NavLink
-                  key={item.url}
-                  to={item.url}
-                  end
-                  className={`flex items-center gap-3 px-4 py-2 mx-1 rounded-md text-sm transition-colors ${
-                    isActive
-                      ? "bg-sidebar-accent text-primary font-medium"
-                      : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground"
-                  } ${collapsed ? "justify-center" : ""}`}
-                  activeClassName=""
-                >
-                  <item.icon className="h-4 w-4 shrink-0" />
-                  {!collapsed && <span>{item.title}</span>}
-                </NavLink>
-              );
-            })}
+            <button
+              onClick={() => setTransferOpen(true)}
+              className={`flex items-center gap-3 px-4 py-2 mx-1 rounded-md text-sm transition-colors text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground w-full ${collapsed ? "justify-center" : ""}`}
+            >
+              <ArrowRightLeft className="h-4 w-4 shrink-0" />
+              {!collapsed && <span>Transférer un bien</span>}
+            </button>
+            <button
+              onClick={() => setSignupOpen(true)}
+              className={`flex items-center gap-3 px-4 py-2 mx-1 rounded-md text-sm transition-colors text-sidebar-foreground hover:bg-sidebar-accent hover:text-foreground w-full ${collapsed ? "justify-center" : ""}`}
+            >
+              <UserPlus className="h-4 w-4 shrink-0" />
+              {!collapsed && <span>Inscription</span>}
+            </button>
           </div>
-        ))}
-      </nav>
+        </nav>
 
-      <button
-        onClick={() => setCollapsed(!collapsed)}
-        className="h-10 flex items-center justify-center border-t border-sidebar-border text-muted-foreground hover:text-foreground transition-colors"
-      >
-        {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
-      </button>
-    </aside>
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="h-10 flex items-center justify-center border-t border-sidebar-border text-muted-foreground hover:text-foreground transition-colors"
+        >
+          {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+        </button>
+      </aside>
+
+      <TransferDialog open={transferOpen} onOpenChange={setTransferOpen} />
+      <SignupModal open={signupOpen} onOpenChange={setSignupOpen} />
+    </>
   );
 }
