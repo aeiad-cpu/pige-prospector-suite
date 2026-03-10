@@ -126,7 +126,7 @@ const scrapedData: ScrapedLead[] = [
     vendeur: "Marc Dupont", phone: "06 11 22 33 44",
   },
   {
-    id: 12, property: "T3 vue mer balcon 72m²", ville: "Nice", prix: "395 000 €", surface: "72m²", pieces: 3, source: "LBC", publishedAt: "Il y a 2h30",
+    id: 12, property: "T3 vue mer balcon 72m²", ville: "Nice", prix: "395 000 €", surface: "72m²", pieces: 3, source: "LBC", publishedAt: "Il y a 2h30", status: "prospect",
     description: "T3 de 72m² avec balcon, vue dégagée, 2 chambres, séjour lumineux. Quartier Cimiez, calme.",
     photos: ["https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400&h=260&fit=crop"],
     vendeur: "Julie Favre", phone: "06 55 66 77 88",
