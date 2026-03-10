@@ -282,6 +282,29 @@ const Pipeline = () => {
         {activeFilters > 0 && <Badge variant="default" className="h-7 text-[10px] font-display"><Filter className="h-3 w-3 mr-1" />{activeFilters} filtre{activeFilters > 1 ? "s" : ""}</Badge>}
       </div>
 
+      {/* Status filter bar */}
+      <div className="flex items-center gap-1.5 mb-4 flex-wrap">
+        {pipelineStatuses.map(col => {
+          const count = leads.filter(l => l.status === col.key).length;
+          const isActive = statusFilter === col.key;
+          return (
+            <button
+              key={col.key}
+              onClick={() => setStatusFilter(prev => prev === col.key ? null : col.key)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs transition-colors ${
+                isActive
+                  ? "bg-primary/10 border-primary/40 text-primary font-medium"
+                  : "border-border text-muted-foreground hover:border-primary/30 hover:text-foreground"
+              }`}
+            >
+              <span className={`h-2 w-2 rounded-full shrink-0 ${col.dotColor}`} />
+              <span className="font-display text-[11px] uppercase tracking-wider whitespace-nowrap">{col.label}</span>
+              <span className={`text-[10px] font-bold ${isActive ? "text-primary" : "text-muted-foreground"}`}>{count}</span>
+            </button>
+          );
+        })}
+      </div>
+
       {/* Content */}
       {viewMode === "grid" ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
