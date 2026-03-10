@@ -445,6 +445,9 @@ const Pipeline = () => {
                     <Button variant="outline" size="sm" className="h-6 text-[10px] gap-1 px-2" onClick={() => handleCall(lead)}>
                       <Phone className="h-2.5 w-2.5" /> Tél
                     </Button>
+                    <Button variant="outline" size="sm" className="h-6 text-[10px] gap-1 px-2" onClick={() => setTransferLead(lead)}>
+                      <ArrowRightLeft className="h-2.5 w-2.5" />
+                    </Button>
                   </div>
                 </div>
               ))}
